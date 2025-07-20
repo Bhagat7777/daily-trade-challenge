@@ -65,6 +65,42 @@ export type Database = {
         }
         Relationships: []
       }
+      challenge_participants: {
+        Row: {
+          challenge_start_date: string
+          completion_rate: number | null
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          longest_streak: number | null
+          total_submissions: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_start_date?: string
+          completion_rate?: number | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          longest_streak?: number | null
+          total_submissions?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_start_date?: string
+          completion_rate?: number | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          longest_streak?: number | null
+          total_submissions?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -277,6 +313,42 @@ export type Database = {
           setting_value?: Json
           updated_at?: string
           updated_by?: string | null
+        }
+        Relationships: []
+      }
+      trade_submissions: {
+        Row: {
+          chart_image_url: string | null
+          created_at: string | null
+          id: string
+          market_pair: string | null
+          submission_date: string
+          trade_idea: string
+          twitter_link: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chart_image_url?: string | null
+          created_at?: string | null
+          id?: string
+          market_pair?: string | null
+          submission_date?: string
+          trade_idea: string
+          twitter_link: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chart_image_url?: string | null
+          created_at?: string | null
+          id?: string
+          market_pair?: string | null
+          submission_date?: string
+          trade_idea?: string
+          twitter_link?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
