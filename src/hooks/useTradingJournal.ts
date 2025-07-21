@@ -83,27 +83,47 @@ export const useTradingJournal = () => {
 
   // Fetch leaderboard
   const fetchLeaderboard = async () => {
-    const { data, error } = await supabase
-      .from('challenge_participants')
-      .select(`
-        *,
-        profiles (
-          username,
-          full_name
-        )
-      `)
-      .order('total_submissions', { ascending: false })
-      .order('current_streak', { ascending: false })
-      .limit(20);
+    try {
+      // Fetch participants and profiles separately to avoid join issues
+      const { data: participantsData, error: participantsError } = await supabase
+        .from('challenge_participants')
+        .select('*')
+        .order('total_submissions', { ascending: false })
+        .order('current_streak', { ascending: false })
+        .limit(20);
 
-    if (error) {
+      if (participantsError) {
+        throw participantsError;
+      }
+
+      // Fetch profiles separately
+      const userIds = participantsData?.map(p => p.user_id) || [];
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('id, username, full_name')
+        .in('id', userIds);
+
+      // Combine the data
+      const transformedData: ChallengeParticipant[] = participantsData?.map(participant => {
+        const profile = profilesData?.find(p => p.id === participant.user_id);
+        return {
+          ...participant,
+          profiles: profile ? {
+            username: profile.username || 'Anonymous',
+            full_name: profile.full_name || 'Anonymous User'
+          } : null
+        };
+      }) || [];
+
+      setLeaderboard(transformedData);
+    } catch (error: any) {
+      console.error('Error fetching leaderboard:', error);
       toast({
         title: "Error",
         description: "Failed to fetch leaderboard",
         variant: "destructive",
       });
-    } else {
-      setLeaderboard((data as any) || []);
+      setLeaderboard([]);
     }
   };
 
