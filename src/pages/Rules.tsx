@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Twitter, Calendar, Trophy, ArrowRight } from 'lucide-react';
+import SocialLinks from '@/components/ui/social-links';
 
 const Rules = () => {
   const navigate = useNavigate();
@@ -46,14 +47,18 @@ const Rules = () => {
                   <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center text-success-foreground font-bold">3</div>
                   <div>
                     <h3 className="font-semibold">Twitter Post</h3>
-                    <p className="text-muted-foreground">Post on Twitter with <Badge variant="secondary">#15DaysofTrading</Badge></p>
+                    <div className="text-muted-foreground">
+                      Post on Twitter with <Badge variant="secondary">#15DaysofTrading</Badge>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center text-success-foreground font-bold">4</div>
                   <div>
                     <h3 className="font-semibold">Tag Requirement</h3>
-                    <p className="text-muted-foreground">Tag <Badge variant="secondary">@free_propfirm</Badge> in your post</p>
+                    <div className="text-muted-foreground">
+                      Tag <Badge variant="secondary">@free_propfirm</Badge> in your post
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -89,6 +94,18 @@ const Rules = () => {
 [Attach your chart image]`}
                 </pre>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card shadow-card">
+            <CardHeader>
+              <CardTitle className="text-center">Connect With Us</CardTitle>
+              <CardDescription className="text-center">
+                Follow our social media for updates, tips, and community support
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SocialLinks />
             </CardContent>
           </Card>
 

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
+import SocialLinks from '@/components/ui/social-links';
 import { 
   Calendar, 
   TrendingUp, 
@@ -220,6 +221,19 @@ const Dashboard = () => {
               </Button>
             </div>
           </CardContent>
+        </Card>
+
+        {/* Social Links */}
+        <Card className="bg-gradient-card shadow-card">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              Stay Connected
+              <SocialLinks variant="compact" />
+            </CardTitle>
+            <CardDescription>
+              Follow us for trading tips, updates, and community support
+            </CardDescription>
+          </CardHeader>
         </Card>
       </div>
     </div>

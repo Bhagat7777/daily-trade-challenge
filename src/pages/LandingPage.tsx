@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import SocialLinks from '@/components/ui/social-links';
 import { 
   TrendingUp, 
   Calendar, 
@@ -159,11 +160,11 @@ const LandingPage = () => {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm font-bold mt-0.5">3</div>
-                  <p>Post on Twitter with hashtag <Badge variant="secondary">#15DaysofTrading</Badge></p>
+                  <div>Post on Twitter with hashtag <Badge variant="secondary">#15DaysofTrading</Badge></div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm font-bold mt-0.5">4</div>
-                  <p>Tag <Badge variant="secondary">@free_propfirm</Badge> in your Twitter post</p>
+                  <div>Tag <Badge variant="secondary">@free_propfirm</Badge> in your Twitter post</div>
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm font-bold mt-0.5">5</div>
@@ -204,6 +205,25 @@ const LandingPage = () => {
                     [Attach your chart image]
                   </p>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Links Section */}
+      <section className="py-20 px-4 bg-muted/30">
+        <div className="container mx-auto">
+          <div className="max-w-2xl mx-auto">
+            <Card className="bg-gradient-card shadow-card">
+              <CardHeader>
+                <CardTitle className="text-center">Stay Connected</CardTitle>
+                <CardDescription className="text-center">
+                  Follow us for trading tips, updates, and community support
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SocialLinks />
               </CardContent>
             </Card>
           </div>
