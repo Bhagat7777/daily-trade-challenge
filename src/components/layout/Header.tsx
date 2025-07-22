@@ -10,13 +10,32 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { TrendingUp, BarChart3, User, LogOut } from 'lucide-react';
+import { TrendingUp, BarChart3, User, LogOut, Shield } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) return;
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      setIsAdmin(profile?.role === 'admin');
+    };
+
+    checkAdminStatus();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -78,6 +97,17 @@ const Header = () => {
                 >
                   Rules
                 </Button>
+                {isAdmin && (
+                  <Button
+                    variant={isActive('/admin-dashboard') ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => navigate('/admin-dashboard')}
+                    className="text-orange-600 hover:text-orange-700"
+                  >
+                    <Shield className="h-4 w-4 mr-1" />
+                    Admin
+                  </Button>
+                )}
               </nav>
 
               {/* User Menu */}
@@ -108,6 +138,12 @@ const Header = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate('/admin-dashboard')}>
+                      <Shield className="mr-2 h-4 w-4 text-orange-600" />
+                      <span className="text-orange-600">Admin Dashboard</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />

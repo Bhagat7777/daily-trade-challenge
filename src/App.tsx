@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import SubmitTrade from "./pages/SubmitTrade";
 import Leaderboard from "./pages/Leaderboard";
 import Rules from "./pages/Rules";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const AppRoutes = () => {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/submit" element={<ProtectedRoute><SubmitTrade /></ProtectedRoute>} />
+        <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

@@ -111,28 +111,37 @@ export type Database = {
       }
       profiles: {
         Row: {
+          admin_notes: string | null
           avatar_url: string | null
           created_at: string | null
           full_name: string | null
           id: string
+          is_challenge_completed: boolean | null
+          is_disqualified: boolean | null
           role: string | null
           updated_at: string | null
           username: string | null
         }
         Insert: {
+          admin_notes?: string | null
           avatar_url?: string | null
           created_at?: string | null
           full_name?: string | null
           id: string
+          is_challenge_completed?: boolean | null
+          is_disqualified?: boolean | null
           role?: string | null
           updated_at?: string | null
           username?: string | null
         }
         Update: {
+          admin_notes?: string | null
           avatar_url?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string
+          is_challenge_completed?: boolean | null
+          is_disqualified?: boolean | null
           role?: string | null
           updated_at?: string | null
           username?: string | null
@@ -328,8 +337,10 @@ export type Database = {
         Row: {
           chart_image_url: string | null
           created_at: string | null
+          day_number: number | null
           id: string
           market_pair: string | null
+          rule_followed: boolean | null
           submission_date: string
           trade_idea: string
           twitter_link: string
@@ -339,8 +350,10 @@ export type Database = {
         Insert: {
           chart_image_url?: string | null
           created_at?: string | null
+          day_number?: number | null
           id?: string
           market_pair?: string | null
+          rule_followed?: boolean | null
           submission_date?: string
           trade_idea: string
           twitter_link: string
@@ -350,8 +363,10 @@ export type Database = {
         Update: {
           chart_image_url?: string | null
           created_at?: string | null
+          day_number?: number | null
           id?: string
           market_pair?: string | null
+          rule_followed?: boolean | null
           submission_date?: string
           trade_idea?: string
           twitter_link?: string

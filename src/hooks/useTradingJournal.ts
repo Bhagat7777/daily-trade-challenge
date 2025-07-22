@@ -96,24 +96,27 @@ export const useTradingJournal = () => {
         throw participantsError;
       }
 
-      // Fetch profiles separately
+      // Fetch profiles separately, excluding disqualified users
       const userIds = participantsData?.map(p => p.user_id) || [];
       const { data: profilesData } = await supabase
         .from('profiles')
-        .select('id, username, full_name')
-        .in('id', userIds);
+        .select('id, username, full_name, is_disqualified')
+        .in('id', userIds)
+        .eq('is_disqualified', false);
 
-      // Combine the data
-      const transformedData: ChallengeParticipant[] = participantsData?.map(participant => {
-        const profile = profilesData?.find(p => p.id === participant.user_id);
-        return {
-          ...participant,
-          profiles: profile ? {
-            username: profile.username || 'Anonymous',
-            full_name: profile.full_name || 'Anonymous User'
-          } : null
-        };
-      }) || [];
+      // Combine the data and filter out disqualified users
+      const transformedData: ChallengeParticipant[] = participantsData
+        ?.map(participant => {
+          const profile = profilesData?.find(p => p.id === participant.user_id);
+          return {
+            ...participant,
+            profiles: profile ? {
+              username: profile.username || 'Anonymous',
+              full_name: profile.full_name || 'Anonymous User'
+            } : null
+          };
+        })
+        .filter(participant => participant.profiles !== null) || []; // Only include non-disqualified users
 
       setLeaderboard(transformedData);
     } catch (error: any) {
