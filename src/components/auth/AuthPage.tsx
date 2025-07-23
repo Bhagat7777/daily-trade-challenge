@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { TrendingUp, BarChart3 } from 'lucide-react';
-import { createAdminUser } from '@/utils/adminSetup';
+import { ensureAdminUser } from '@/utils/adminSetup';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
@@ -17,9 +17,11 @@ const AuthPage = () => {
   // Auto-login admin user on component mount
   useEffect(() => {
     const setupAdmin = async () => {
-      const { error } = await createAdminUser();
-      if (error) {
-        console.log('Admin setup note:', error.message);
+      const result = await ensureAdminUser();
+      if (result.error) {
+        console.log('Admin setup note:', result.error.message);
+      } else if (result.success) {
+        console.log('Admin user is ready');
       }
     };
     setupAdmin();
@@ -235,6 +237,39 @@ const AuthPage = () => {
                 </form>
               </TabsContent>
             </Tabs>
+            
+            {/* Admin Setup Section */}
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <h3 className="text-sm font-medium mb-2">Quick Admin Setup</h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                Click this button to ensure admin user is created and logged in
+              </p>
+              <Button
+                onClick={async () => {
+                  setLoading(true);
+                  const result = await ensureAdminUser();
+                  if (result.success) {
+                    toast({
+                      title: "Success!",
+                      description: "Admin user is ready. Refresh the page to continue.",
+                    });
+                  } else {
+                    toast({
+                      title: "Error",
+                      description: result.error?.message || "Failed to setup admin",
+                      variant: "destructive",
+                    });
+                  }
+                  setLoading(false);
+                }}
+                variant="outline"
+                size="sm"
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? "Setting up..." : "Setup Admin User"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

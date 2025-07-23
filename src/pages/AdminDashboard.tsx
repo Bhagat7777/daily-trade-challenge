@@ -109,22 +109,30 @@ const AdminDashboard = () => {
     return calendar;
   };
 
-  if (isAdmin === null) {
+  if (isAdmin === null || loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Loading admin dashboard...</p>
+        </div>
       </div>
     );
   }
 
   if (!isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="text-center space-y-4">
+          <Shield className="h-12 w-12 text-muted-foreground mx-auto" />
+          <div>
+            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <p className="text-muted-foreground">You don't have admin privileges.</p>
+          </div>
+          <Button onClick={() => window.location.href = '/dashboard'}>
+            Go to Dashboard
+          </Button>
+        </div>
       </div>
     );
   }

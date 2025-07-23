@@ -56,7 +56,7 @@ export const useAdminDashboard = () => {
     try {
       setLoading(true);
       
-      // Join profiles with challenge_participants and auth.users
+      // Join profiles with challenge_participants
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -66,14 +66,14 @@ export const useAdminDashboard = () => {
           is_challenge_completed,
           is_disqualified,
           admin_notes,
-          challenge_participants!inner (
+          challenge_participants (
             total_submissions,
             current_streak,
             challenge_start_date,
             completion_rate
           )
         `)
-        .order('challenge_participants.total_submissions', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -88,16 +88,13 @@ export const useAdminDashboard = () => {
             .limit(1)
             .single();
 
-          // Get email from auth metadata (for display only)
-          const { data: authUser } = await supabase.auth.admin.getUserById(user.id);
-
-          const participant = user.challenge_participants[0];
+          const participant = user.challenge_participants?.[0];
           
           return {
             id: user.id,
             username: user.username || 'Anonymous',
             full_name: user.full_name || 'Anonymous User',
-            email: authUser?.user?.email || 'N/A',
+            email: 'Email hidden for privacy', // We can't access auth.users from client
             total_submissions: participant?.total_submissions || 0,
             current_streak: participant?.current_streak || 0,
             last_submission_date: lastSubmission?.submission_date || null,
