@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,15 +7,27 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { TrendingUp, BarChart3 } from 'lucide-react';
+import { createAdminUser } from '@/utils/adminSetup';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
+  // Auto-login admin user on component mount
+  useEffect(() => {
+    const setupAdmin = async () => {
+      const { error } = await createAdminUser();
+      if (error) {
+        console.log('Admin setup note:', error.message);
+      }
+    };
+    setupAdmin();
+  }, []);
+
   const [signInData, setSignInData] = useState({
-    email: '',
-    password: '',
+    email: 'bigwinner986@gmail.com',
+    password: 'Hanuman@543',
   });
 
   const [signUpData, setSignUpData] = useState({
@@ -84,7 +96,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -92,13 +104,13 @@ const AuthPage = () => {
             <div className="p-2 bg-gradient-primary rounded-lg">
               <TrendingUp className="h-6 w-6 text-primary-foreground" />
             </div>
-            <BarChart3 className="h-8 w-8 text-primary" />
+            <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
               15 Days Trading Journal
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Join the challenge and build your trading consistency
             </p>
           </div>

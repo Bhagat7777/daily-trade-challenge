@@ -133,27 +133,27 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-primary" />
+            <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-              <p className="text-muted-foreground">15 Days Trading Journal Challenge</p>
+              <h1 className="text-2xl sm:text-3xl font-bold">Admin Dashboard</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">15 Days Trading Journal Challenge</p>
             </div>
           </div>
           
-          <div className="flex gap-2">
-            <Button onClick={handleExportAll} variant="outline" size="sm">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Button onClick={handleExportAll} variant="outline" size="sm" className="flex-1 sm:flex-none">
               <Download className="h-4 w-4 mr-2" />
-              Export All
+              <span className="hidden sm:inline">Export </span>All
             </Button>
-            <Button onClick={handleExportCompleted} variant="outline" size="sm">
+            <Button onClick={handleExportCompleted} variant="outline" size="sm" className="flex-1 sm:flex-none">
               <Download className="h-4 w-4 mr-2" />
-              Completed
+              <span className="hidden sm:inline">Export </span>Completed
             </Button>
-            <Button onClick={handleExportDisqualified} variant="outline" size="sm">
+            <Button onClick={handleExportDisqualified} variant="outline" size="sm" className="flex-1 sm:flex-none">
               <Download className="h-4 w-4 mr-2" />
-              Disqualified
+              <span className="hidden sm:inline">Export </span>Disqualified
             </Button>
           </div>
         </div>
@@ -216,11 +216,11 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all">All Users ({filteredUsers.length})</TabsTrigger>
-            <TabsTrigger value="active">Active ({activeUsers.length})</TabsTrigger>
-            <TabsTrigger value="completed">Completed ({completedUsers.length})</TabsTrigger>
-            <TabsTrigger value="disqualified">Disqualified ({disqualifiedUsers.length})</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+            <TabsTrigger value="all" className="text-xs sm:text-sm">All ({filteredUsers.length})</TabsTrigger>
+            <TabsTrigger value="active" className="text-xs sm:text-sm">Active ({activeUsers.length})</TabsTrigger>
+            <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed ({completedUsers.length})</TabsTrigger>
+            <TabsTrigger value="disqualified" className="text-xs sm:text-sm">Disqualified ({disqualifiedUsers.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all">
@@ -242,7 +242,7 @@ const AdminDashboard = () => {
 
         {/* Submissions Modal */}
         <Dialog open={showSubmissionsModal} onOpenChange={setShowSubmissionsModal}>
-          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-[95vw] sm:max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {selectedUser?.username}'s Submissions
@@ -264,7 +264,7 @@ const AdminDashboard = () => {
                     <CardTitle className="text-lg">User Status</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Button
                         onClick={() => handleUpdateStatus(selectedUser?.id, { 
                           is_challenge_completed: !selectedUser?.is_challenge_completed 
@@ -313,7 +313,7 @@ const AdminDashboard = () => {
                     <CardTitle className="text-lg">Daily Submissions (15 Days)</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {getSubmissionCalendar().map(({ day, submission, hasSubmission }) => (
                         <Card key={day} className={`p-4 ${hasSubmission ? 'border-green-200' : 'border-red-200'}`}>
                           <div className="flex items-center justify-between mb-2">
@@ -390,70 +390,17 @@ const UserTable = ({ users, onViewSubmissions }: { users: any[], onViewSubmissio
   return (
     <Card>
       <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>User</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Submissions</TableHead>
-              <TableHead>Streak</TableHead>
-              <TableHead>Last Submit</TableHead>
-              <TableHead>Completion Rate</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>
+        {/* Mobile Card View */}
+        <div className="block lg:hidden space-y-4 p-4">
+          {users.map((user) => (
+            <Card key={user.id} className="p-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
                   <div>
                     <div className="font-medium">{user.username}</div>
                     <div className="text-sm text-muted-foreground">{user.full_name}</div>
+                    <div className="text-xs text-muted-foreground">{user.email}</div>
                   </div>
-                </TableCell>
-                <TableCell className="text-sm">{user.email}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">
-                    {user.total_submissions}/15
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={user.current_streak > 0 ? "default" : "secondary"}>
-                    {user.current_streak} days
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm">
-                  {user.last_submission_date 
-                    ? new Date(user.last_submission_date).toLocaleDateString()
-                    : 'Never'
-                  }
-                </TableCell>
-                <TableCell>
-                  <Badge variant={user.completion_rate >= 80 ? "default" : "secondary"}>
-                    {user.completion_rate}%
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    {user.is_challenge_completed && (
-                      <Badge variant="default" className="bg-green-600">
-                        Completed
-                      </Badge>
-                    )}
-                    {user.is_disqualified && (
-                      <Badge variant="destructive">
-                        Disqualified
-                      </Badge>
-                    )}
-                    {!user.is_challenge_completed && !user.is_disqualified && (
-                      <Badge variant="secondary">
-                        In Progress
-                      </Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
                   <Button
                     onClick={() => onViewSubmissions(user)}
                     variant="outline"
@@ -463,11 +410,141 @@ const UserTable = ({ users, onViewSubmissions }: { users: any[], onViewSubmissio
                     <Eye className="h-4 w-4" />
                     View
                   </Button>
-                </TableCell>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Submissions:</span>
+                    <Badge variant="outline" className="ml-2">
+                      {user.total_submissions}/15
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Streak:</span>
+                    <Badge variant={user.current_streak > 0 ? "default" : "secondary"} className="ml-2">
+                      {user.current_streak} days
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Completion:</span>
+                    <Badge variant={user.completion_rate >= 80 ? "default" : "secondary"} className="ml-2">
+                      {user.completion_rate}%
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Status:</span>
+                    <div className="ml-2">
+                      {user.is_challenge_completed && (
+                        <Badge variant="default" className="bg-green-600">
+                          Completed
+                        </Badge>
+                      )}
+                      {user.is_disqualified && (
+                        <Badge variant="destructive">
+                          Disqualified
+                        </Badge>
+                      )}
+                      {!user.is_challenge_completed && !user.is_disqualified && (
+                        <Badge variant="secondary">
+                          In Progress
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-xs text-muted-foreground">
+                  Last Submit: {user.last_submission_date 
+                    ? new Date(user.last_submission_date).toLocaleDateString()
+                    : 'Never'
+                  }
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden lg:block">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>User</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Submissions</TableHead>
+                <TableHead>Streak</TableHead>
+                <TableHead>Last Submit</TableHead>
+                <TableHead>Completion Rate</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{user.username}</div>
+                      <div className="text-sm text-muted-foreground">{user.full_name}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{user.email}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">
+                      {user.total_submissions}/15
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={user.current_streak > 0 ? "default" : "secondary"}>
+                      {user.current_streak} days
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {user.last_submission_date 
+                      ? new Date(user.last_submission_date).toLocaleDateString()
+                      : 'Never'
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={user.completion_rate >= 80 ? "default" : "secondary"}>
+                      {user.completion_rate}%
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      {user.is_challenge_completed && (
+                        <Badge variant="default" className="bg-green-600">
+                          Completed
+                        </Badge>
+                      )}
+                      {user.is_disqualified && (
+                        <Badge variant="destructive">
+                          Disqualified
+                        </Badge>
+                      )}
+                      {!user.is_challenge_completed && !user.is_disqualified && (
+                        <Badge variant="secondary">
+                          In Progress
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => onViewSubmissions(user)}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );

@@ -46,7 +46,7 @@ const Header = () => {
 
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <div 
           className="flex items-center gap-2 cursor-pointer"
@@ -56,9 +56,12 @@ const Header = () => {
             <TrendingUp className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="flex items-center gap-1">
-            <BarChart3 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg text-foreground">
+            <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <span className="font-bold text-sm sm:text-lg text-foreground hidden sm:block">
               15 Days Trading Journal
+            </span>
+            <span className="font-bold text-sm text-foreground sm:hidden">
+              Trading Journal
             </span>
           </div>
         </div>
