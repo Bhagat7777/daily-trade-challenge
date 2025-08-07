@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { TrendingUp, BarChart3, User, LogOut, Shield } from 'lucide-react';
+import { TrendingUp, BarChart3, User, LogOut, Shield, Trophy } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -94,6 +94,14 @@ const Header = () => {
                   Leaderboard
                 </Button>
                 <Button
+                  variant={isActive('/hall-of-fame') ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => navigate('/hall-of-fame')}
+                  className="hidden lg:flex"
+                >
+                  Hall of Fame
+                </Button>
+                <Button
                   variant={isActive('/rules') ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => navigate('/rules')}
@@ -140,6 +148,10 @@ const Header = () => {
                   <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                     <User className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/hall-of-fame')}>
+                    <Trophy className="mr-2 h-4 w-4" />
+                    <span>Hall of Fame</span>
                   </DropdownMenuItem>
                   {isAdmin && (
                     <DropdownMenuItem onClick={() => navigate('/admin-dashboard')}>

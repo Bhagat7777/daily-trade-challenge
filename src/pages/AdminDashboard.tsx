@@ -19,6 +19,7 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import AdminLeaderboard from '@/components/admin/AdminLeaderboard';
 import { 
   AlertTriangle,
   CheckCircle, 
@@ -31,7 +32,8 @@ import {
   Calendar,
   TrendingUp,
   Users,
-  Shield
+  Shield,
+  Trophy
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 
@@ -223,13 +225,26 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+        <Tabs defaultValue="leaderboard" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+            <TabsTrigger value="leaderboard" className="text-xs sm:text-sm flex items-center gap-1">
+              <Trophy className="h-3 w-3" />
+              Leaderboard
+            </TabsTrigger>
             <TabsTrigger value="all" className="text-xs sm:text-sm">All ({filteredUsers.length})</TabsTrigger>
             <TabsTrigger value="active" className="text-xs sm:text-sm">Active ({activeUsers.length})</TabsTrigger>
             <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed ({completedUsers.length})</TabsTrigger>
             <TabsTrigger value="disqualified" className="text-xs sm:text-sm">Disqualified ({disqualifiedUsers.length})</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="leaderboard">
+            <AdminLeaderboard
+              users={filteredUsers}
+              onViewSubmissions={handleViewSubmissions}
+              onUpdateStatus={updateUserStatus}
+              onExport={exportToCSV}
+            />
+          </TabsContent>
 
           <TabsContent value="all">
             <UserTable users={filteredUsers} onViewSubmissions={handleViewSubmissions} />

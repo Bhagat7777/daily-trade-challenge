@@ -10,6 +10,7 @@ import AuthPage from "./components/auth/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import SubmitTrade from "./pages/SubmitTrade";
 import Leaderboard from "./pages/Leaderboard";
+import HallOfFame from "./pages/HallOfFame";
 import Rules from "./pages/Rules";
 import AdminDebug from "./pages/AdminDebug";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -42,6 +43,7 @@ const AppRoutes = () => {
         <Route path="/auth" element={user ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/hall-of-fame" element={<HallOfFame />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/submit" element={<ProtectedRoute><SubmitTrade /></ProtectedRoute>} />
         <Route path="/admin-debug" element={<AdminDebug />} />
