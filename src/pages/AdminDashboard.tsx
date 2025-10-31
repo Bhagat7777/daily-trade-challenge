@@ -33,9 +33,11 @@ import {
   TrendingUp,
   Users,
   Shield,
-  Trophy
+  Trophy,
+  Megaphone
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
+import { CampaignManagement } from '@/components/admin/CampaignManagement';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -226,10 +228,14 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="leaderboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
             <TabsTrigger value="leaderboard" className="text-xs sm:text-sm flex items-center gap-1">
               <Trophy className="h-3 w-3" />
               Leaderboard
+            </TabsTrigger>
+            <TabsTrigger value="campaigns" className="text-xs sm:text-sm flex items-center gap-1">
+              <Megaphone className="h-3 w-3" />
+              Campaigns
             </TabsTrigger>
             <TabsTrigger value="all" className="text-xs sm:text-sm">All ({filteredUsers.length})</TabsTrigger>
             <TabsTrigger value="active" className="text-xs sm:text-sm">Active ({activeUsers.length})</TabsTrigger>
@@ -244,6 +250,10 @@ const AdminDashboard = () => {
               onUpdateStatus={updateUserStatus}
               onExport={exportToCSV}
             />
+          </TabsContent>
+
+          <TabsContent value="campaigns">
+            <CampaignManagement />
           </TabsContent>
 
           <TabsContent value="all">

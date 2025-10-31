@@ -7,13 +7,202 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
+      account_stats: {
+        Row: {
+          account_id: string
+          current_balance: number
+          open_unrealized_pnl: number
+          total_closed_pnl: number
+          total_closed_pnl_percent: number
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          current_balance?: number
+          open_unrealized_pnl?: number
+          total_closed_pnl?: number
+          total_closed_pnl_percent?: number
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          current_balance?: number
+          open_unrealized_pnl?: number
+          total_closed_pnl?: number
+          total_closed_pnl_percent?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_stats_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounts: {
+        Row: {
+          created_at: string
+          current_balance: number | null
+          default_risk_percent: number
+          id: string
+          initial_balance: number
+          is_active: boolean
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_balance?: number | null
+          default_risk_percent?: number
+          id?: string
+          initial_balance?: number
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_balance?: number | null
+          default_risk_percent?: number
+          id?: string
+          initial_balance?: number
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_settings: {
+        Row: {
+          id: string
+          setting_key: string
+          setting_value: Json
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          admin_id: string
+          comment: string | null
+          created_at: string | null
+          id: string
+          submission_id: string
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          submission_id: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "trade_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automated_check_logs: {
+        Row: {
+          checked_at: string | null
+          contains_hashtag: boolean | null
+          duplicate_submission: boolean | null
+          id: string
+          raw_data: Json | null
+          screenshot_present: boolean | null
+          submission_id: string
+          tags_account: boolean | null
+          tweet_exists: boolean | null
+        }
+        Insert: {
+          checked_at?: string | null
+          contains_hashtag?: boolean | null
+          duplicate_submission?: boolean | null
+          id?: string
+          raw_data?: Json | null
+          screenshot_present?: boolean | null
+          submission_id: string
+          tags_account?: boolean | null
+          tweet_exists?: boolean | null
+        }
+        Update: {
+          checked_at?: string | null
+          contains_hashtag?: boolean | null
+          duplicate_submission?: boolean | null
+          id?: string
+          raw_data?: Json | null
+          screenshot_present?: boolean | null
+          submission_id?: string
+          tags_account?: boolean | null
+          tweet_exists?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automated_check_logs_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "trade_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_id: string
@@ -65,8 +254,112 @@ export type Database = {
         }
         Relationships: []
       }
+      calculation_audit: {
+        Row: {
+          changed_at: string
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+          reason: string | null
+          trade_id: string
+          user_id: string | null
+        }
+        Insert: {
+          changed_at?: string
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          reason?: string | null
+          trade_id: string
+          user_id?: string | null
+        }
+        Update: {
+          changed_at?: string
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          reason?: string | null
+          trade_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calculation_audit_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: false
+            referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          banner_url: string | null
+          created_at: string
+          created_by: string | null
+          days_count: number
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean
+          rewards: Json | null
+          rules: string | null
+          slug: string | null
+          start_date: string
+          status: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          days_count?: number
+          description?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean
+          rewards?: Json | null
+          rules?: string | null
+          slug?: string | null
+          start_date: string
+          status?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          days_count?: number
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          rewards?: Json | null
+          rules?: string | null
+          slug?: string | null
+          start_date?: string
+          status?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenge_participants: {
         Row: {
+          campaign_id: string | null
           challenge_start_date: string
           completion_rate: number | null
           created_at: string | null
@@ -78,6 +371,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          campaign_id?: string | null
           challenge_start_date?: string
           completion_rate?: number | null
           created_at?: string | null
@@ -89,6 +383,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          campaign_id?: string | null
           challenge_start_date?: string
           completion_rate?: number | null
           created_at?: string | null
@@ -100,6 +395,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "challenge_participants_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "challenge_participants_user_id_fkey"
             columns: ["user_id"]
@@ -116,6 +418,7 @@ export type Database = {
           created_at: string | null
           full_name: string | null
           id: string
+          is_admin: boolean | null
           is_challenge_completed: boolean | null
           is_disqualified: boolean | null
           role: string | null
@@ -128,6 +431,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id: string
+          is_admin?: boolean | null
           is_challenge_completed?: boolean | null
           is_disqualified?: boolean | null
           role?: string | null
@@ -140,6 +444,7 @@ export type Database = {
           created_at?: string | null
           full_name?: string | null
           id?: string
+          is_admin?: boolean | null
           is_challenge_completed?: boolean | null
           is_disqualified?: boolean | null
           role?: string | null
@@ -335,45 +640,164 @@ export type Database = {
       }
       trade_submissions: {
         Row: {
+          admin_comment: string | null
+          admin_id: string | null
+          automated_checks: Json | null
+          campaign_id: string | null
           chart_image_url: string | null
           created_at: string | null
           day_number: number | null
           id: string
           market_pair: string | null
+          reviewed_at: string | null
           rule_followed: boolean | null
+          status: string | null
           submission_date: string
           trade_idea: string
           twitter_link: string
+          twitter_screenshot_url: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          admin_comment?: string | null
+          admin_id?: string | null
+          automated_checks?: Json | null
+          campaign_id?: string | null
           chart_image_url?: string | null
           created_at?: string | null
           day_number?: number | null
           id?: string
           market_pair?: string | null
+          reviewed_at?: string | null
           rule_followed?: boolean | null
+          status?: string | null
           submission_date?: string
           trade_idea: string
           twitter_link: string
+          twitter_screenshot_url?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          admin_comment?: string | null
+          admin_id?: string | null
+          automated_checks?: Json | null
+          campaign_id?: string | null
           chart_image_url?: string | null
           created_at?: string | null
           day_number?: number | null
           id?: string
           market_pair?: string | null
+          reviewed_at?: string | null
           rule_followed?: boolean | null
+          status?: string | null
           submission_date?: string
           trade_idea?: string
           twitter_link?: string
+          twitter_screenshot_url?: string | null
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trade_submissions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trade_submissions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trades: {
+        Row: {
+          account_id: string
+          account_size_snapshot: number | null
+          closed_at: string | null
+          contract_size: number | null
+          created_at: string
+          entry_price: number | null
+          exit_price: number | null
+          id: string
+          notes: string | null
+          pnl_amount: number | null
+          pnl_percent: number | null
+          quantity: number | null
+          risk_amount: number | null
+          risk_percent: number | null
+          session_tag: string | null
+          setup_tag: string | null
+          side: string | null
+          status: string
+          symbol: string
+          trade_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          account_size_snapshot?: number | null
+          closed_at?: string | null
+          contract_size?: number | null
+          created_at?: string
+          entry_price?: number | null
+          exit_price?: number | null
+          id?: string
+          notes?: string | null
+          pnl_amount?: number | null
+          pnl_percent?: number | null
+          quantity?: number | null
+          risk_amount?: number | null
+          risk_percent?: number | null
+          session_tag?: string | null
+          setup_tag?: string | null
+          side?: string | null
+          status?: string
+          symbol: string
+          trade_date?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          account_size_snapshot?: number | null
+          closed_at?: string | null
+          contract_size?: number | null
+          created_at?: string
+          entry_price?: number | null
+          exit_price?: number | null
+          id?: string
+          notes?: string | null
+          pnl_amount?: number | null
+          pnl_percent?: number | null
+          quantity?: number | null
+          risk_amount?: number | null
+          risk_percent?: number | null
+          session_tag?: string | null
+          setup_tag?: string | null
+          side?: string | null
+          status?: string
+          symbol?: string
+          trade_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trades_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       website_sections: {
         Row: {
@@ -416,13 +840,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_admin: {
-        Args: Record<PropertyKey, never>
+      backfill_trades_and_stats: { Args: never; Returns: undefined }
+      get_active_campaign: {
+        Args: never
+        Returns: {
+          created_at: string
+          days_count: number
+          description: string
+          end_date: string
+          id: string
+          is_active: boolean
+          start_date: string
+          title: string
+          type: string
+        }[]
+      }
+      is_admin: { Args: never; Returns: boolean }
+      is_day_unlocked: {
+        Args: { campaign_start_date: string; day_number: number }
         Returns: boolean
       }
+      refresh_account_stats: {
+        Args: { p_account_id: string }
+        Returns: undefined
+      }
+      update_campaign_status: { Args: never; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      campaign_type:
+        | "trading_challenge"
+        | "payout_contest"
+        | "giveaway"
+        | "streak_challenge"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -549,6 +999,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      campaign_type: [
+        "trading_challenge",
+        "payout_contest",
+        "giveaway",
+        "streak_challenge",
+        "other",
+      ],
+    },
   },
 } as const

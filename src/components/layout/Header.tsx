@@ -87,6 +87,13 @@ const Header = () => {
                   Submit Trade
                 </Button>
                 <Button
+                  variant={isActive('/campaigns') ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => navigate('/campaigns')}
+                >
+                  Campaigns
+                </Button>
+                <Button
                   variant={isActive('/leaderboard') ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => navigate('/leaderboard')}
