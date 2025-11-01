@@ -20,7 +20,8 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import AdminLeaderboard from '@/components/admin/AdminLeaderboard';
-import { 
+import { ProofVerification } from '@/components/admin/ProofVerification';
+import {
   AlertTriangle,
   CheckCircle, 
   XCircle, 
@@ -29,6 +30,7 @@ import {
   UserX, 
   Download,
   Search,
+  Clock,
   Calendar,
   TrendingUp,
   Users,
@@ -38,6 +40,7 @@ import {
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { CampaignManagement } from '@/components/admin/CampaignManagement';
+import { PendingVerifications } from '@/components/admin/PendingVerifications';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -227,8 +230,12 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="leaderboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+        <Tabs defaultValue="verifications" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+            <TabsTrigger value="verifications" className="text-xs sm:text-sm flex items-center gap-1">
+              <CheckCircle className="h-3 w-3" />
+              Verify
+            </TabsTrigger>
             <TabsTrigger value="leaderboard" className="text-xs sm:text-sm flex items-center gap-1">
               <Trophy className="h-3 w-3" />
               Leaderboard
@@ -242,6 +249,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="completed" className="text-xs sm:text-sm">Completed ({completedUsers.length})</TabsTrigger>
             <TabsTrigger value="disqualified" className="text-xs sm:text-sm">Disqualified ({disqualifiedUsers.length})</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="verifications">
+            <PendingVerifications />
+          </TabsContent>
 
           <TabsContent value="leaderboard">
             <AdminLeaderboard
@@ -369,34 +380,36 @@ const AdminDashboard = () => {
                             )}
                           </div>
                           
-                          {hasSubmission ? (
-                            <div className="space-y-2">
-                              <p className="text-sm font-medium">
-                                {new Date(submission.submission_date).toLocaleDateString()}
-                              </p>
-                              <p className="text-xs text-muted-foreground line-clamp-2">
-                                {submission.trade_idea}
-                              </p>
-                              {submission.chart_image_url && (
-                                <img 
-                                  src={submission.chart_image_url} 
-                                  alt="Chart" 
-                                  className="w-full h-20 object-cover rounded"
-                                />
-                              )}
-                              <a 
-                                href={submission.twitter_link} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="text-xs text-blue-600 hover:underline block"
-                              >
-                                View Tweet
-                              </a>
-                              {submission.market_pair && (
-                                <Badge variant="outline" className="text-xs">
-                                  {submission.market_pair}
-                                </Badge>
-                              )}
+                           {hasSubmission ? (
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium">
+                                  {new Date(submission.submission_date).toLocaleDateString()}
+                                </p>
+                                {submission.verification_status === 'verified' && (
+                                  <Badge className="bg-green-500 text-xs">
+                                    <CheckCircle className="h-3 w-3 mr-1" />
+                                    Verified
+                                  </Badge>
+                                )}
+                                {submission.verification_status === 'rejected' && (
+                                  <Badge variant="destructive" className="text-xs">
+                                    <XCircle className="h-3 w-3 mr-1" />
+                                    Rejected
+                                  </Badge>
+                                )}
+                                {submission.verification_status === 'pending' && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    Pending
+                                  </Badge>
+                                )}
+                              </div>
+
+                              <ProofVerification
+                                submission={submission}
+                                onVerificationComplete={() => fetchUserSubmissions(selectedUser?.id)}
+                              />
                             </div>
                           ) : (
                             <div className="text-center py-4">

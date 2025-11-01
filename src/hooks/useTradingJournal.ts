@@ -135,12 +135,15 @@ export const useTradingJournal = () => {
     tradeIdea: string,
     twitterLink: string,
     marketPair?: string,
-    chartFile?: File
+    chartImageUrl?: string,
+    chartFile?: File,
+    twitterScreenshot?: File
   ) => {
     if (!user) return { error: 'User not authenticated' };
 
     try {
-      let chartUrl = '';
+      let chartUrl = chartImageUrl || '';
+      let twitterScreenshotUrl = '';
 
       // Upload chart image if provided
       if (chartFile) {
@@ -162,6 +165,26 @@ export const useTradingJournal = () => {
         chartUrl = publicUrl;
       }
 
+      // Upload Twitter screenshot (required)
+      if (twitterScreenshot) {
+        const fileExt = twitterScreenshot.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}_twitter.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('twitter-screenshots')
+          .upload(fileName, twitterScreenshot);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('twitter-screenshots')
+          .getPublicUrl(fileName);
+
+        twitterScreenshotUrl = publicUrl;
+      }
+
       // Insert trade submission
       const { error } = await supabase
         .from('trade_submissions')
@@ -170,7 +193,9 @@ export const useTradingJournal = () => {
           trade_idea: tradeIdea,
           twitter_link: twitterLink,
           market_pair: marketPair,
-          chart_image_url: chartUrl,
+          chart_image_url: chartUrl || null,
+          twitter_screenshot_url: twitterScreenshotUrl || null,
+          verification_status: 'pending',
         });
 
       if (error) {

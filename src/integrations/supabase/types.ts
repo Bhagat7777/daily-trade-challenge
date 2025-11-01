@@ -658,6 +658,9 @@ export type Database = {
           twitter_screenshot_url: string | null
           updated_at: string | null
           user_id: string
+          verification_status: string | null
+          verified_at: string | null
+          verifier_id: string | null
         }
         Insert: {
           admin_comment?: string | null
@@ -678,6 +681,9 @@ export type Database = {
           twitter_screenshot_url?: string | null
           updated_at?: string | null
           user_id: string
+          verification_status?: string | null
+          verified_at?: string | null
+          verifier_id?: string | null
         }
         Update: {
           admin_comment?: string | null
@@ -698,6 +704,9 @@ export type Database = {
           twitter_screenshot_url?: string | null
           updated_at?: string | null
           user_id?: string
+          verification_status?: string | null
+          verified_at?: string | null
+          verifier_id?: string | null
         }
         Relationships: [
           {

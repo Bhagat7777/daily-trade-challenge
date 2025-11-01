@@ -20,7 +20,7 @@ import {
 
 const SubmitTrade = () => {
   const { user } = useAuth();
-  const { submitTradeIdea, canSubmitToday, loading: journalLoading } = useTradingJournal();
+  const { submitTradeIdea, canSubmitToday, userStats, loading: journalLoading } = useTradingJournal();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -28,8 +28,10 @@ const SubmitTrade = () => {
     tradeIdea: '',
     twitterLink: '',
     marketPair: '',
+    chartImageUrl: '',
   });
   const [chartFile, setChartFile] = useState<File | null>(null);
+  const [twitterScreenshot, setTwitterScreenshot] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   const marketPairs = [
@@ -77,7 +79,7 @@ const SubmitTrade = () => {
     );
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChartFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
@@ -89,6 +91,21 @@ const SubmitTrade = () => {
         return;
       }
       setChartFile(file);
+    }
+  };
+
+  const handleTwitterScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File too large",
+          description: "Please choose an image under 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      setTwitterScreenshot(file);
     }
   };
 
@@ -127,13 +144,24 @@ const SubmitTrade = () => {
       return;
     }
 
+    if (!twitterScreenshot) {
+      toast({
+        title: "Twitter screenshot required",
+        description: "Please upload a screenshot of your Twitter post",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await submitTradeIdea(
       formData.tradeIdea,
       formData.twitterLink,
       formData.marketPair,
-      chartFile || undefined
+      formData.chartImageUrl,
+      chartFile || undefined,
+      twitterScreenshot
     );
 
     if (!error) {
@@ -148,123 +176,77 @@ const SubmitTrade = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-8">
           {/* Header */}
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto">
-              <TrendingUp className="h-8 w-8 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">Submit Today's Trade Idea</h1>
-              <p className="text-muted-foreground">
-                Share your analysis and maintain your consistency streak
-              </p>
-            </div>
+          <div className="space-y-2 mb-6">
+            <h1 className="text-2xl font-bold">
+              Submit Trade - Day {userStats ? userStats.total_submissions + 1 : 1}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Share your trade idea and analysis for today
+            </p>
           </div>
 
-          {/* Requirements Card */}
-          <Card className="bg-gradient-card shadow-card border-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-primary" />
-                Submission Requirements
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span>Post your trade idea on Twitter/X with #15DaysofTrading</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span>Tag @free_propfirm in your post</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span>Include a chart image in your Twitter post</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span>Paste the Twitter post link below</span>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Submission Form */}
-          <Card className="bg-gradient-card shadow-card">
-            <CardHeader>
-              <CardTitle>Trade Submission Form</CardTitle>
-              <CardDescription>
-                Fill out all required fields to submit your daily trade idea
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+          <Card className="bg-card border-border">
+            <CardContent className="pt-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Trade Idea */}
                 <div className="space-y-2">
-                  <Label htmlFor="trade-idea">Trade Idea & Analysis *</Label>
+                  <Label htmlFor="trade-idea">Trade Idea *</Label>
                   <Textarea
                     id="trade-idea"
-                    placeholder="Describe your trade setup, analysis, strategy, and reasoning..."
+                    placeholder="Describe your trade setup, entry/exit points, and reasoning..."
                     value={formData.tradeIdea}
                     onChange={(e) =>
                       setFormData({ ...formData, tradeIdea: e.target.value })
                     }
-                    rows={6}
+                    rows={4}
                     required
-                    className="resize-none"
+                    className="resize-none bg-card"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Include your technical analysis, entry/exit strategy, and risk management
-                  </p>
                 </div>
 
-                {/* Market Pair */}
+                {/* Twitter Link */}
                 <div className="space-y-2">
-                  <Label htmlFor="market-pair">Market Pair (Optional)</Label>
-                  <Select
-                    value={formData.marketPair}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, marketPair: value })
+                  <Label htmlFor="twitter-link">Twitter/X Link *</Label>
+                  <Input
+                    id="twitter-link"
+                    type="url"
+                    placeholder="https://twitter.com/..."
+                    value={formData.twitterLink}
+                    onChange={(e) =>
+                      setFormData({ ...formData, twitterLink: e.target.value })
                     }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a trading pair" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {marketPairs.map((pair) => (
-                        <SelectItem key={pair} value={pair}>
-                          {pair}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    className="bg-card"
+                    required
+                  />
                 </div>
 
-                {/* Chart Upload */}
+                {/* Twitter Screenshot Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="chart-upload">Chart Image (Optional)</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                  <Label htmlFor="twitter-screenshot">Twitter Screenshot Proof *</Label>
+                  <div className="border-2 border-dashed border-primary/30 rounded-lg p-8 text-center bg-primary/10 hover:bg-primary/20 transition-colors">
                     <input
-                      id="chart-upload"
+                      id="twitter-screenshot"
                       type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
+                      accept="image/png,image/jpeg,image/jpg"
+                      onChange={handleTwitterScreenshotChange}
                       className="hidden"
                     />
-                    <label htmlFor="chart-upload" className="cursor-pointer">
+                    <label htmlFor="twitter-screenshot" className="cursor-pointer">
                       <div className="space-y-2">
-                        {chartFile ? (
+                        {twitterScreenshot ? (
                           <>
-                            <FileImage className="h-8 w-8 text-success mx-auto" />
-                            <p className="text-sm font-medium">{chartFile.name}</p>
+                            <CheckCircle className="h-10 w-10 text-success mx-auto" />
+                            <p className="text-sm font-medium">{twitterScreenshot.name}</p>
                             <p className="text-xs text-muted-foreground">
-                              Click to change file
+                              Click to change screenshot
                             </p>
                           </>
                         ) : (
                           <>
-                            <Upload className="h-8 w-8 text-muted-foreground mx-auto" />
+                            <Upload className="h-10 w-10 text-primary mx-auto" />
                             <p className="text-sm font-medium">
-                              Upload your chart image
+                              Click to upload Twitter screenshot
                             </p>
                             <p className="text-xs text-muted-foreground">
                               PNG, JPG up to 5MB
@@ -276,36 +258,54 @@ const SubmitTrade = () => {
                   </div>
                 </div>
 
-                {/* Twitter Link */}
+                {/* Market Pair */}
                 <div className="space-y-2">
-                  <Label htmlFor="twitter-link">Twitter Post Link *</Label>
-                  <div className="relative">
-                    <Twitter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="twitter-link"
-                      type="url"
-                      placeholder="https://twitter.com/username/status/123456789"
-                      value={formData.twitterLink}
-                      onChange={(e) =>
-                        setFormData({ ...formData, twitterLink: e.target.value })
-                      }
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Link to your Twitter post with #15DaysofTrading and @free_propfirm
-                  </p>
+                  <Label htmlFor="market-pair">Market Pair (Optional)</Label>
+                  <Input
+                    id="market-pair"
+                    type="text"
+                    placeholder="e.g. BTC/USD, EUR/USD"
+                    value={formData.marketPair}
+                    onChange={(e) =>
+                      setFormData({ ...formData, marketPair: e.target.value })
+                    }
+                    className="bg-card"
+                  />
                 </div>
 
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-primary hover:opacity-90 text-lg py-3"
-                >
-                  {loading ? "Submitting..." : "Submit Trade Idea"}
-                </Button>
+                {/* Chart Image URL */}
+                <div className="space-y-2">
+                  <Label htmlFor="chart-url">Chart Image URL (Optional)</Label>
+                  <Input
+                    id="chart-url"
+                    type="url"
+                    placeholder="https://..."
+                    value={formData.chartImageUrl}
+                    onChange={(e) =>
+                      setFormData({ ...formData, chartImageUrl: e.target.value })
+                    }
+                    className="bg-card"
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate('/dashboard')}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-primary hover:bg-primary/90"
+                  >
+                    {loading ? "Submitting..." : "Submit Trade"}
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
