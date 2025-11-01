@@ -113,7 +113,7 @@ export const CampaignCard = ({ campaign, index }: CampaignCardProps) => {
             onClick={() => {
               // Handle button click based on campaign status
               if (campaign.status === 'live') {
-                window.location.href = '/submit-trade';
+                window.location.href = '/submit';
               }
             }}
           >
