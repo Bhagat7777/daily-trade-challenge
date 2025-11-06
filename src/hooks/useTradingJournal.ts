@@ -118,7 +118,7 @@ export const useTradingJournal = () => {
       // 1. Get the single active, live campaign
       const { data: activeCampaign, error: campaignError } = await supabase
         .from('campaigns')
-        .select('id, days_count')
+        .select('id, days_count, start_date, end_date')
         .eq('is_active', true)
         .eq('status', 'live')
         .single();
@@ -151,28 +151,53 @@ export const useTradingJournal = () => {
       // 3. Fetch all submissions for this campaign to get live counts
       const { data: submissionsData, error: submissionsError } = await supabase
         .from('trade_submissions')
-        .select('user_id')
-        .eq('campaign_id', activeCampaign.id);
+        .select('user_id, submission_date')
+        .eq('campaign_id', activeCampaign.id)
+        .gte('submission_date', activeCampaign.start_date)
+        .lte('submission_date', activeCampaign.end_date);
       
       if (submissionsError) throw submissionsError;
 
-      // 4. Count submissions for each user
-      const submissionsByUser = (submissionsData || []).reduce((acc: Record<string, number>, sub) => {
-        acc[sub.user_id] = (acc[sub.user_id] || 0) + 1;
+      // 4. Group submissions by user and calculate live stats
+      const submissionsByUser = (submissionsData || []).reduce((acc: Record<string, string[]>, sub) => {
+        if (!acc[sub.user_id]) acc[sub.user_id] = [];
+        acc[sub.user_id].push(sub.submission_date);
         return acc;
       }, {});
+
+      const calculateStreakForUser = (submissionDatesStrings: string[]): number => {
+        if (!submissionDatesStrings || submissionDatesStrings.length === 0) return 0;
+        const submissionDates = new Set(submissionDatesStrings);
+        const sortedDates = [...submissionDates].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        const lastSubmissionDateUTC = new Date(sortedDates[0] + 'T00:00:00Z');
+        const timeDiff = today.getTime() - lastSubmissionDateUTC.getTime();
+        const dayDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+        if (dayDiff > 1) return 0;
+        let streak = 0;
+        let currentDate = lastSubmissionDateUTC;
+        while (submissionDates.has(currentDate.toISOString().split('T')[0])) {
+          streak++;
+          currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+        }
+        return streak;
+      };
 
       // 5. Build the final leaderboard data with live calculations
       const transformedData = (participantsData || [])
         .map(participant => {
           if (!participant.profiles) return null;
 
-          const liveSubmissionCount = submissionsByUser[participant.user_id] || 0;
+          const userSubmissions = submissionsByUser[participant.user_id] || [];
+          const liveSubmissionCount = userSubmissions.length;
+          const liveCurrentStreak = calculateStreakForUser(userSubmissions);
           
           return {
             ...participant,
-            total_submissions: liveSubmissionCount, // Use live count
-            completion_rate: Math.round((liveSubmissionCount / activeCampaign.days_count) * 100), // Use live calculation
+            total_submissions: liveSubmissionCount,
+            current_streak: liveCurrentStreak,
+            completion_rate: Math.round((liveSubmissionCount / activeCampaign.days_count) * 100),
             profiles: {
               username: participant.profiles.username || 'Anonymous',
               full_name: participant.profiles.full_name || 'Anonymous User'
@@ -181,7 +206,6 @@ export const useTradingJournal = () => {
         })
         .filter(p => p !== null)
         .sort((a, b) => {
-          // Sort by total submissions, then by current streak
           if (b.total_submissions !== a.total_submissions) {
             return b.total_submissions - a.total_submissions;
           }
