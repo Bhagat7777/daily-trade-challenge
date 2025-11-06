@@ -42,14 +42,27 @@ export const useTradingJournal = () => {
   const [leaderboard, setLeaderboard] = useState<ChallengeParticipant[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user's submissions
+  // Fetch user's submissions for the active campaign
   const fetchUserSubmissions = async () => {
     if (!user) return;
+
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .eq('is_active', true)
+      .eq('status', 'live')
+      .single();
+
+    if (!campaign) {
+      setSubmissions([]);
+      return;
+    }
 
     const { data, error } = await supabase
       .from('trade_submissions')
       .select('*')
       .eq('user_id', user.id)
+      .eq('campaign_id', campaign.id)
       .order('submission_date', { ascending: false });
 
     if (error) {
@@ -63,14 +76,27 @@ export const useTradingJournal = () => {
     }
   };
 
-  // Fetch user stats
+  // Fetch user stats for the active campaign
   const fetchUserStats = async () => {
     if (!user) return;
+
+    const { data: campaign } = await supabase
+      .from('campaigns')
+      .select('id')
+      .eq('is_active', true)
+      .eq('status', 'live')
+      .single();
+
+    if (!campaign) {
+      setUserStats(null);
+      return;
+    }
 
     const { data, error } = await supabase
       .from('challenge_participants')
       .select('*')
       .eq('user_id', user.id)
+      .eq('campaign_id', campaign.id)
       .single();
 
     if (error && error.code !== 'PGRST116') {

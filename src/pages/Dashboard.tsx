@@ -115,12 +115,8 @@ const Dashboard = () => {
       dayDate.setHours(0, 0, 0, 0);
       
       const dateString = dayDate.toISOString().split('T')[0];
-      // Filter submissions by active campaign - only match submissions for this campaign
-      const submission = submissions.find(sub => {
-        const submissionDate = sub.submission_date === dateString;
-        const submissionCampaign = activeCampaign && sub.campaign_id === activeCampaign.id;
-        return submissionDate && submissionCampaign;
-      });
+      // Submissions from the hook are now pre-filtered for the active campaign
+      const submission = submissions.find(sub => sub.submission_date === dateString);
       
       const isUnlocked = dayDate <= today;
       const isPast = dayDate < today;
@@ -151,10 +147,8 @@ const Dashboard = () => {
   const currentDay = campaignStartDate ? 
     Math.min(Math.max(1, Math.floor((today.getTime() - campaignStartDate.getTime()) / (1000 * 60 * 60 * 24)) + 1), daysCount) : 1;
   
-  // Calculate campaign-specific submissions count - only count submissions for the active campaign
-  const campaignSubmissions = submissions.filter(sub => 
-    activeCampaign && sub.campaign_id === activeCampaign.id
-  ).length;
+  // Submissions from the hook are pre-filtered, so we can just use the length
+  const campaignSubmissions = submissions.length;
   
   const progressPercentage = Math.round((campaignSubmissions / daysCount) * 100);
 
