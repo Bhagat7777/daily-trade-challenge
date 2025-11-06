@@ -22,11 +22,12 @@ export interface ChallengeParticipant {
   user_id: string;
   challenge_start_date: string;
   total_submissions: number;
-  current_streak: number;
-  longest_streak: number;
+  current_streak: number | null;
+  longest_streak: number | null;
   completion_rate: number;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
+  campaign_id: string | null;
   profiles?: {
     username: string;
     full_name: string;
@@ -86,53 +87,78 @@ export const useTradingJournal = () => {
   // Fetch leaderboard
   const fetchLeaderboard = async () => {
     try {
-      // First, get active campaign
-      const { data: activeCampaign } = await supabase
+      // 1. Get the single active, live campaign
+      const { data: activeCampaign, error: campaignError } = await supabase
         .from('campaigns')
-        .select('id')
+        .select('id, days_count')
         .eq('is_active', true)
+        .eq('status', 'live')
         .single();
 
-      // Fetch participants and profiles separately to avoid join issues
-      let participantsQuery = supabase
+      if (campaignError || !activeCampaign) {
+        if (campaignError && campaignError.code !== 'PGRST116') { // Ignore "no rows" error
+          throw campaignError;
+        }
+        setLeaderboard([]);
+        return;
+      }
+
+      // 2. Fetch all participants for this specific campaign, joining with profiles
+      const { data: participantsData, error: participantsError } = await supabase
         .from('challenge_participants')
-        .select('*')
-        .order('total_submissions', { ascending: false })
-        .order('current_streak', { ascending: false })
-        .limit(20);
+        .select(`
+          *,
+          profiles (
+            id,
+            username,
+            full_name,
+            is_disqualified
+          )
+        `)
+        .eq('campaign_id', activeCampaign.id)
+        .filter('profiles.is_disqualified', 'is', false);
 
-      // Filter by campaign if one is active
-      if (activeCampaign) {
-        participantsQuery = participantsQuery.eq('campaign_id', activeCampaign.id);
-      }
+      if (participantsError) throw participantsError;
 
-      const { data: participantsData, error: participantsError } = await participantsQuery;
+      // 3. Fetch all submissions for this campaign to get live counts
+      const { data: submissionsData, error: submissionsError } = await supabase
+        .from('trade_submissions')
+        .select('user_id')
+        .eq('campaign_id', activeCampaign.id);
+      
+      if (submissionsError) throw submissionsError;
 
-      if (participantsError) {
-        throw participantsError;
-      }
+      // 4. Count submissions for each user
+      const submissionsByUser = (submissionsData || []).reduce((acc: Record<string, number>, sub) => {
+        acc[sub.user_id] = (acc[sub.user_id] || 0) + 1;
+        return acc;
+      }, {});
 
-      // Fetch profiles separately, excluding disqualified users
-      const userIds = participantsData?.map(p => p.user_id) || [];
-      const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, is_disqualified')
-        .in('id', userIds)
-        .eq('is_disqualified', false);
+      // 5. Build the final leaderboard data with live calculations
+      const transformedData = (participantsData || [])
+        .map(participant => {
+          if (!participant.profiles) return null;
 
-      // Combine the data and filter out disqualified users
-      const transformedData: ChallengeParticipant[] = participantsData
-        ?.map(participant => {
-          const profile = profilesData?.find(p => p.id === participant.user_id);
+          const liveSubmissionCount = submissionsByUser[participant.user_id] || 0;
+          
           return {
             ...participant,
-            profiles: profile ? {
-              username: profile.username || 'Anonymous',
-              full_name: profile.full_name || 'Anonymous User'
-            } : null
+            total_submissions: liveSubmissionCount, // Use live count
+            completion_rate: Math.round((liveSubmissionCount / activeCampaign.days_count) * 100), // Use live calculation
+            profiles: {
+              username: participant.profiles.username || 'Anonymous',
+              full_name: participant.profiles.full_name || 'Anonymous User'
+            }
           };
         })
-        .filter(participant => participant.profiles !== null) || []; // Only include non-disqualified users
+        .filter(p => p !== null)
+        .sort((a, b) => {
+          // Sort by total submissions, then by current streak
+          if (b.total_submissions !== a.total_submissions) {
+            return b.total_submissions - a.total_submissions;
+          }
+          return (b.current_streak || 0) - (a.current_streak || 0);
+        });
 
       setLeaderboard(transformedData);
     } catch (error: any) {
