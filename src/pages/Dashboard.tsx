@@ -373,6 +373,50 @@ const Dashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Submission CTA Card */}
+      <Card className="bg-gradient-card shadow-card mt-8">
+        <CardHeader>
+          <CardTitle>Ready for Today's Submission?</CardTitle>
+          <CardDescription>
+            {canSubmitToday()
+              ? "Submit your trade idea for today to maintain your streak."
+              : "You've already submitted today. Great job maintaining consistency."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row gap-4">
+          {canSubmitToday() ? (
+            <Button
+              onClick={() => navigate('/submit')}
+              className="bg-gradient-primary hover:opacity-90"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Submit Today's Trade
+            </Button>
+          ) : (
+            <Button disabled className="bg-success hover:bg-success">
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Today's Submission Complete
+            </Button>
+          )}
+          <Button variant="outline" onClick={() => navigate('/leaderboard')}>
+            View Leaderboard
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Social Links Card */}
+      <Card className="bg-gradient-card shadow-card mt-8">
+        <CardHeader>
+          <CardTitle>Stay Connected</CardTitle>
+          <CardDescription>
+            Follow us for trading tips, updates, and community support
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <SocialLinks />
+        </CardContent>
+      </Card>
     </div>
   );
 };
