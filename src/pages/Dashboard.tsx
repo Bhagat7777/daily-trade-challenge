@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTradingJournal } from '@/hooks/useTradingJournal';
 import { supabase } from '@/integrations/supabase/client';
@@ -84,6 +84,36 @@ const Dashboard = () => {
       supabase.removeChannel(campaignChannel);
     };
   }, []);
+
+  const calculatedStreak = useMemo(() => {
+    if (submissions.length === 0) return 0;
+
+    const submissionDates = new Set(submissions.map(s => s.submission_date));
+    const sortedDates = [...submissionDates].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+    if (sortedDates.length === 0) return 0;
+
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    
+    const lastSubmissionDateUTC = new Date(sortedDates[0] + 'T00:00:00Z');
+
+    const timeDiff = today.getTime() - lastSubmissionDateUTC.getTime();
+    const dayDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+
+    if (dayDiff > 1) {
+      return 0;
+    }
+
+    let streak = 0;
+    let currentDate = lastSubmissionDateUTC;
+    while (submissionDates.has(currentDate.toISOString().split('T')[0])) {
+      streak++;
+      currentDate.setUTCDate(currentDate.getUTCDate() - 1);
+    }
+
+    return streak;
+  }, [submissions]);
 
   if (loading || campaignLoading) {
     return (
@@ -208,7 +238,7 @@ const Dashboard = () => {
               <Flame className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{userStats?.current_streak || 0}</div>
+              <div className="text-2xl font-bold">{calculatedStreak}</div>
               <p className="text-xs text-muted-foreground">
                 consecutive days
               </p>

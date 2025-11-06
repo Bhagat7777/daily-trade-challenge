@@ -48,7 +48,7 @@ export const useTradingJournal = () => {
 
     const { data: campaign } = await supabase
       .from('campaigns')
-      .select('id')
+      .select('id, start_date, end_date')
       .eq('is_active', true)
       .eq('status', 'live')
       .single();
@@ -63,6 +63,8 @@ export const useTradingJournal = () => {
       .select('*')
       .eq('user_id', user.id)
       .eq('campaign_id', campaign.id)
+      .gte('submission_date', campaign.start_date)
+      .lte('submission_date', campaign.end_date)
       .order('submission_date', { ascending: false });
 
     if (error) {
