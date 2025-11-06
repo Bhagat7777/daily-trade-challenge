@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { format, differenceInDays } from 'date-fns';
 import { 
   Upload, 
@@ -39,6 +39,7 @@ const SubmitTrade = () => {
   const { submitTradeIdea, canSubmitToday, userStats, loading: journalLoading } = useTradingJournal();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { campaignId } = useParams<{ campaignId?: string }>();
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
   const [campaignLoading, setCampaignLoading] = useState(true);
   const [currentDay, setCurrentDay] = useState<number>(1);
@@ -67,13 +68,18 @@ const SubmitTrade = () => {
         // Update campaign statuses first
         await supabase.rpc('update_campaign_status');
 
-        // Fetch active campaign
-        const { data: campaign, error } = await supabase
-          .from('campaigns')
-          .select('*')
-          .eq('is_active', true)
-          .eq('status', 'live')
-          .maybeSingle();
+        let campaignQuery = supabase.from('campaigns').select('*');
+
+        if (campaignId) {
+          campaignQuery = campaignQuery.eq('id', campaignId).single();
+        } else {
+          campaignQuery = campaignQuery
+            .eq('is_active', true)
+            .eq('status', 'live')
+            .maybeSingle();
+        }
+
+        const { data: campaign, error } = await campaignQuery;
 
         if (error) {
           console.error('Error fetching campaign:', error);
@@ -108,7 +114,7 @@ const SubmitTrade = () => {
     };
 
     fetchCampaignAndCalculateDay();
-  }, []);
+  }, [campaignId]);
 
   if (journalLoading || campaignLoading) {
     return (

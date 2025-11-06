@@ -46,7 +46,7 @@ const AppRoutes = () => {
         <Route path="/hall-of-fame" element={<HallOfFame />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/submit" element={<ProtectedRoute><SubmitTrade /></ProtectedRoute>} />
+        <Route path="/submit/:campaignId?" element={<ProtectedRoute><SubmitTrade /></ProtectedRoute>} />
         <Route path="/admin-debug" element={<AdminDebug />} />
         <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />

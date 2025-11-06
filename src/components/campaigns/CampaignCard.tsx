@@ -6,6 +6,7 @@ import { CountdownTimer } from "./CountdownTimer";
 import { Calendar, Trophy, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -13,6 +14,8 @@ interface CampaignCardProps {
 }
 
 export const CampaignCard = ({ campaign, index }: CampaignCardProps) => {
+  const navigate = useNavigate();
+
   const getStatusInfo = () => {
     switch (campaign.status) {
       case 'live':
@@ -111,9 +114,8 @@ export const CampaignCard = ({ campaign, index }: CampaignCardProps) => {
             className="w-full" 
             variant={statusInfo.button.variant}
             onClick={() => {
-              // Handle button click based on campaign status
               if (campaign.status === 'live') {
-                window.location.href = '/submit';
+                navigate(`/submit/${campaign.id}`);
               }
             }}
           >
