@@ -47,6 +47,7 @@ export const useAdminDashboard = () => {
         .from('campaigns')
         .select('*')
         .eq('is_active', true)
+        .eq('status', 'live')
         .order('start_date', { ascending: false })
         .limit(1)
         .single();

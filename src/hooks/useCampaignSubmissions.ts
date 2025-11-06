@@ -72,6 +72,7 @@ export const useCampaignSubmissions = () => {
         .from('campaigns')
         .select('id, title, days_count, start_date')
         .eq('status', 'live')
+        .eq('is_active', true)
         .single();
 
       if (campaignError || !campaignData) {
