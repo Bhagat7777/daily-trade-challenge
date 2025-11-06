@@ -78,10 +78,8 @@ export const useAdminDashboard = () => {
     try {
       setLoading(true);
       
-      // Get active campaign first
       const campaign = await fetchActiveCampaign();
       
-      // Join profiles with challenge_participants
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -103,74 +101,75 @@ export const useAdminDashboard = () => {
 
       if (error) throw error;
 
-      // Get campaign-specific submissions for each user
       const usersWithSubmissions = await Promise.all(
         (data || []).map(async (user) => {
-          // Only fetch if we have an active campaign
-          if (!campaign?.id) {
-            return {
-              id: user.id,
-              username: user.username || 'Anonymous',
-              full_name: user.full_name || 'Anonymous User',
-              email: 'Email hidden for privacy',
-              total_submissions: 0,
-              current_streak: 0,
-              last_submission_date: null,
-              is_challenge_completed: user.is_challenge_completed || false,
-              is_disqualified: user.is_disqualified || false,
-              admin_notes: user.admin_notes,
-              challenge_start_date: '2025-11-06',
-              completion_rate: 0,
-              campaign_days: 15,
-            };
+          let campaignSubmissions = 0;
+          let lastSubmissionDate = null;
+          let completionRate = 0;
+          let participant = null;
+          let currentStreak = 0;
+          let challengeStartDate = '2025-11-06';
+          let campaignDays = 15;
+
+          if (campaign?.id) {
+            campaignDays = campaign.days_count;
+
+            const { count } = await supabase
+              .from('trade_submissions')
+              .select('*', { count: 'exact', head: true })
+              .eq('user_id', user.id)
+              .eq('campaign_id', campaign.id);
+            campaignSubmissions = count || 0;
+
+            if (campaignSubmissions > 0) {
+              const { data: lastSub } = await supabase
+                .from('trade_submissions')
+                .select('submission_date')
+                .eq('user_id', user.id)
+                .eq('campaign_id', campaign.id)
+                .order('submission_date', { ascending: false })
+                .limit(1)
+                .single();
+              lastSubmissionDate = lastSub?.submission_date || null;
+            }
+
+            const participants = user.challenge_participants;
+            const participantsArray = Array.isArray(participants) ? participants : (participants ? [participants] : []);
+            participant = participantsArray.find((p: any) => p.campaign_id === campaign.id);
+            
+            if (participant) {
+              currentStreak = participant.current_streak || 0;
+              challengeStartDate = participant.challenge_start_date || campaign.start_date;
+            } else {
+              challengeStartDate = campaign.start_date;
+            }
+
+            completionRate = campaign.days_count 
+              ? Math.round((campaignSubmissions / campaign.days_count) * 100) 
+              : 0;
           }
-
-          // Get submissions count ONLY for active campaign
-          const { count: campaignSubmissions } = await supabase
-            .from('trade_submissions')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .eq('campaign_id', campaign.id);
-
-          const { data: lastSubmission } = await supabase
-            .from('trade_submissions')
-            .select('submission_date')
-            .eq('user_id', user.id)
-            .eq('campaign_id', campaign.id)
-            .order('submission_date', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
-          // Pick the participant entry that belongs to the active campaign when available
-          const participant = (user.challenge_participants || []).find((p: any) => p.campaign_id === campaign.id) || user.challenge_participants?.[0];
-
-          // Calculate completion rate based on active campaign submissions only
-          const completionRate = campaignSubmissions && campaign.days_count 
-            ? Math.round((campaignSubmissions / campaign.days_count) * 100) 
-            : 0;
 
           return {
             id: user.id,
             username: user.username || 'Anonymous',
             full_name: user.full_name || 'Anonymous User',
             email: 'Email hidden for privacy',
-            total_submissions: campaignSubmissions || 0,
-            current_streak: participant?.current_streak || 0,
-            last_submission_date: lastSubmission?.submission_date || null,
+            total_submissions: campaignSubmissions,
+            current_streak: currentStreak,
+            last_submission_date: lastSubmissionDate,
             is_challenge_completed: user.is_challenge_completed || false,
             is_disqualified: user.is_disqualified || false,
             admin_notes: user.admin_notes,
-            challenge_start_date: participant?.challenge_start_date || campaign.start_date,
+            challenge_start_date: challengeStartDate,
             completion_rate: completionRate,
-            campaign_days: campaign.days_count,
-            // attach campaign id so we can filter later if needed
-            _participant_campaign_id: participant?.campaign_id || null,
+            campaign_days: campaignDays,
           };
         })
       );
 
-      // If we have an active campaign, show only users who have submissions for this campaign
-      const filtered = campaign?.id ? usersWithSubmissions.filter(u => (u.total_submissions || 0) > 0 || u._participant_campaign_id === campaign.id) : usersWithSubmissions;
+      const filtered = campaign?.id 
+        ? usersWithSubmissions.filter(u => u.total_submissions > 0) 
+        : usersWithSubmissions;
 
       setUsers(filtered);
       setLastUpdate(new Date());
