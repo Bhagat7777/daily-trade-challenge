@@ -84,17 +84,36 @@ export const CampaignSubmissions = () => {
   const { activeCampaign, traders, loading } = useCampaignSubmissions();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredTraders = useMemo(() => {
-    const tradersArray = Array.from(traders.values());
-    if (!searchTerm) {
-      return tradersArray;
-    }
-    return tradersArray.filter(trader =>
-      trader.profile.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trader.profile.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      trader.profile.id.toLowerCase().includes(searchTerm.toLowerCase())
+  const activeDays = useMemo(() => {
+    if (!activeCampaign) return 0;
+    const daysElapsed = Math.max(0, new Date().getTime() - new Date(activeCampaign.start_date).getTime());
+    return Math.min(
+      Math.floor(daysElapsed / (1000 * 60 * 60 * 24)) + 1,
+      activeCampaign.days_count
     );
-  }, [traders, searchTerm]);
+  }, [activeCampaign]);
+
+  const filteredTraders = useMemo(() => {
+    let tradersArray = Array.from(traders.values());
+
+    // Filter to only show traders who submitted today (current active day)
+    if (activeDays > 0) {
+      tradersArray = tradersArray.filter(trader => trader.submissions.has(activeDays));
+    } else {
+      return []; // If campaign hasn't started, show no one
+    }
+
+    // Then, filter by search term
+    if (searchTerm) {
+      tradersArray = tradersArray.filter(trader =>
+        trader.profile.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        trader.profile.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        trader.profile.id.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    return tradersArray;
+  }, [traders, searchTerm, activeDays]);
 
   if (loading) {
     return (
@@ -116,19 +135,13 @@ export const CampaignSubmissions = () => {
     );
   }
 
-  const daysElapsed = Math.max(0, new Date().getTime() - new Date(activeCampaign.start_date).getTime());
-  const activeDays = Math.min(
-    Math.floor(daysElapsed / (1000 * 60 * 60 * 24)) + 1,
-    activeCampaign.days_count
-  );
-
   return (
     <div className="space-y-6">
       {/* Campaign Summary */}
       <Card className="bg-gradient-card">
         <CardHeader>
-          <CardTitle>Campaign Summary</CardTitle>
-          <CardDescription>Overview of the currently active campaign.</CardDescription>
+          <CardTitle>Today's Submissions Summary (Day {activeDays})</CardTitle>
+          <CardDescription>Overview of the currently active campaign for today.</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="flex items-center gap-3">
@@ -141,8 +154,8 @@ export const CampaignSubmissions = () => {
           <div className="flex items-center gap-3">
             <div className="p-3 bg-primary/10 rounded-lg"><Users className="h-6 w-6 text-primary" /></div>
             <div>
-              <div className="text-sm text-muted-foreground">Total Traders</div>
-              <div className="font-semibold">{traders.size}</div>
+              <div className="text-sm text-muted-foreground">Traders Submitted Today</div>
+              <div className="font-semibold">{filteredTraders.length} / {traders.size}</div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -180,7 +193,12 @@ export const CampaignSubmissions = () => {
           </AnimatePresence>
           {filteredTraders.length === 0 && (
             <Card className="text-center py-12">
-              <CardDescription>No traders found matching your search.</CardDescription>
+              <CardDescription>
+                {searchTerm 
+                  ? "No traders found matching your search." 
+                  : "No submissions have been made for today yet."
+                }
+              </CardDescription>
             </Card>
           )}
         </div>
