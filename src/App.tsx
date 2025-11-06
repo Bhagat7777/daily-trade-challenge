@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import Header from "@/components/layout/Header";
+import Layout from "@/components/layout/Layout";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./components/auth/AuthPage";
 import Dashboard from "./pages/Dashboard";
@@ -37,8 +37,7 @@ const AppRoutes = () => {
   const { user } = useAuth();
 
   return (
-    <>
-      <Header />
+    <Layout>
       <Routes>
         <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <LandingPage />} />
         <Route path="/auth" element={user ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
@@ -52,7 +51,7 @@ const AppRoutes = () => {
         <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+    </Layout>
   );
 };
 

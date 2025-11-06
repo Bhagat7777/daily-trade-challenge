@@ -33,7 +33,7 @@ const HallOfFame = () => {
 
     // Sort by different criteria
     const topStreakers = [...leaderboard]
-      .sort((a, b) => b.longest_streak - a.longest_streak)
+      .sort((a, b) => (b.longest_streak || 0) - (a.longest_streak || 0))
       .slice(0, 10);
 
     const topConsistent = [...leaderboard]
@@ -126,7 +126,7 @@ const HallOfFame = () => {
               <div className="text-xs text-muted-foreground">Submissions</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-success">{participant.longest_streak}</div>
+              <div className="text-2xl font-bold text-success">{participant.longest_streak || 0}</div>
               <div className="text-xs text-muted-foreground">Best Streak</div>
             </div>
             <div className="text-center">
@@ -204,228 +204,212 @@ const HallOfFame = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="w-20 h-20 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto shadow-success">
-            <Crown className="h-10 w-10 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
-              Hall of Fame
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Celebrating our most dedicated and consistent traders
-            </p>
-          </div>
+    <div className="pb-20 md:pb-0">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <div className="w-20 h-20 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto shadow-success">
+          <Crown className="h-10 w-10 text-primary-foreground" />
         </div>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-gradient-card shadow-card text-center">
-            <CardHeader>
-              <div className="w-12 h-12 bg-gradient-success rounded-full flex items-center justify-center mx-auto mb-2">
-                <Trophy className="h-6 w-6 text-success-foreground" />
-              </div>
-              <CardTitle>Winners</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-success">{topPerformers.winners.length}</div>
-              <p className="text-sm text-muted-foreground">Completed 15 days</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-card shadow-card text-center">
-            <CardHeader>
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Flame className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <CardTitle>Best Streak</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-chart">
-                {topPerformers.topStreakers[0]?.longest_streak || 0}
-              </div>
-              <p className="text-sm text-muted-foreground">Consecutive days</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-card shadow-card text-center">
-            <CardHeader>
-              <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-2">
-                <Target className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <CardTitle>Top Completion</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">
-                {topPerformers.topConsistent[0] ? Math.round(topPerformers.topConsistent[0].completion_rate) : 0}%
-              </div>
-              <p className="text-sm text-muted-foreground">Completion rate</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-card shadow-card text-center">
-            <CardHeader>
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Users className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <CardTitle>Total Participants</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{leaderboard.length}</div>
-              <p className="text-sm text-muted-foreground">Active traders</p>
-            </CardContent>
-          </Card>
+        <div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
+            Hall of Fame
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Celebrating our most dedicated and consistent traders
+          </p>
         </div>
+      </div>
 
-        {/* Hall of Fame Categories */}
-        <Tabs defaultValue="winners" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="winners" className="flex items-center gap-2">
-              <Trophy className="h-4 w-4" />
-              Winners
-            </TabsTrigger>
-            <TabsTrigger value="streakers" className="flex items-center gap-2">
-              <Flame className="h-4 w-4" />
-              Streakers
-            </TabsTrigger>
-            <TabsTrigger value="consistent" className="flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Consistent
-            </TabsTrigger>
-            <TabsTrigger value="submitters" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              Active
-            </TabsTrigger>
-          </TabsList>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+        <Card className="bg-gradient-card shadow-card text-center">
+          <CardHeader>
+            <div className="w-12 h-12 bg-gradient-success rounded-full flex items-center justify-center mx-auto mb-2">
+              <Trophy className="h-6 w-6 text-success-foreground" />
+            </div>
+            <CardTitle className="text-base">Winners</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-success">{topPerformers.winners.length}</div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="winners">
-            <Card className="bg-gradient-card shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-success" />
-                  Challenge Winners
-                </CardTitle>
-                <CardDescription>
-                  Traders who completed all 15 days of the trading journal challenge
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {topPerformers.winners.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No winners yet</h3>
-                    <p className="text-muted-foreground">
-                      Complete all 15 days to become a challenge winner!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {topPerformers.winners.map((participant, index) => (
-                      <HallOfFameCard
-                        key={participant.id}
-                        participant={participant}
-                        rank={index + 1}
-                        category="Challenge Winner"
-                      />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <Card className="bg-gradient-card shadow-card text-center">
+          <CardHeader>
+            <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Flame className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <CardTitle className="text-base">Best Streak</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-chart">
+              {topPerformers.topStreakers[0]?.longest_streak || 0}
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="streakers">
-            <Card className="bg-gradient-card shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Flame className="h-6 w-6 text-chart" />
-                  Top Streakers
-                </CardTitle>
-                <CardDescription>
-                  Traders with the longest consecutive submission streaks
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {topPerformers.topStreakers.map((participant, index) => (
-                    <HallOfFameCard
-                      key={participant.id}
-                      participant={participant}
-                      rank={index + 1}
-                      category="Streak Master"
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        <Card className="bg-gradient-card shadow-card text-center">
+          <CardHeader>
+            <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-2">
+              <Target className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <CardTitle className="text-base">Top Completion</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-primary">
+              {topPerformers.topConsistent[0] ? Math.round(topPerformers.topConsistent[0].completion_rate) : 0}%
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="consistent">
-            <Card className="bg-gradient-card shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-6 w-6 text-primary" />
-                  Most Consistent
-                </CardTitle>
-                <CardDescription>
-                  Traders with the highest completion rates
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {topPerformers.topConsistent.map((participant, index) => (
-                    <HallOfFameCard
-                      key={participant.id}
-                      participant={participant}
-                      rank={index + 1}
-                      category="Consistency Champion"
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="submitters">
-            <Card className="bg-gradient-card shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-6 w-6 text-warning" />
-                  Most Active
-                </CardTitle>
-                <CardDescription>
-                  Traders with the most total submissions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {topPerformers.topSubmitters.map((participant, index) => (
-                    <HallOfFameCard
-                      key={participant.id}
-                      participant={participant}
-                      rank={index + 1}
-                      category="Activity Leader"
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        {/* Note */}
-        <Card className="bg-muted/30">
-          <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground text-center">
-              <strong>Note:</strong> The Hall of Fame celebrates consistency, dedication, and participation in the 15-day trading journal challenge. 
-              Rankings are based on submission frequency, streaks, and completion rates - not trading performance.
-            </p>
+        <Card className="bg-gradient-card shadow-card text-center">
+          <CardHeader>
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Users className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <CardTitle className="text-base">Participants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{leaderboard.length}</div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Hall of Fame Categories */}
+      <Tabs defaultValue="winners" className="space-y-6 mt-8">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+          <TabsTrigger value="winners" className="flex items-center gap-2 text-xs sm:text-sm">
+            <Trophy className="h-4 w-4" />
+            Winners
+          </TabsTrigger>
+          <TabsTrigger value="streakers" className="flex items-center gap-2 text-xs sm:text-sm">
+            <Flame className="h-4 w-4" />
+            Streakers
+          </TabsTrigger>
+          <TabsTrigger value="consistent" className="flex items-center gap-2 text-xs sm:text-sm">
+            <Target className="h-4 w-4" />
+            Consistent
+          </TabsTrigger>
+          <TabsTrigger value="submitters" className="flex items-center gap-2 text-xs sm:text-sm">
+            <Star className="h-4 w-4" />
+            Active
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="winners">
+          <Card className="bg-gradient-card shadow-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-6 w-6 text-success" />
+                Challenge Winners
+              </CardTitle>
+              <CardDescription>
+                Traders who completed all 15 days of the trading journal challenge
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {topPerformers.winners.length === 0 ? (
+                <div className="text-center py-12">
+                  <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No winners yet</h3>
+                  <p className="text-muted-foreground">
+                    Complete all 15 days to become a challenge winner!
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {topPerformers.winners.map((participant, index) => (
+                    <HallOfFameCard
+                      key={participant.id}
+                      participant={participant}
+                      rank={index + 1}
+                      category="Challenge Winner"
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="streakers">
+          <Card className="bg-gradient-card shadow-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Flame className="h-6 w-6 text-chart" />
+                Top Streakers
+              </CardTitle>
+              <CardDescription>
+                Traders with the longest consecutive submission streaks
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {topPerformers.topStreakers.map((participant, index) => (
+                  <HallOfFameCard
+                    key={participant.id}
+                    participant={participant}
+                    rank={index + 1}
+                    category="Streak Master"
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="consistent">
+          <Card className="bg-gradient-card shadow-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-6 w-6 text-primary" />
+                Most Consistent
+              </CardTitle>
+              <CardDescription>
+                Traders with the highest completion rates
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {topPerformers.topConsistent.map((participant, index) => (
+                  <HallOfFameCard
+                    key={participant.id}
+                    participant={participant}
+                    rank={index + 1}
+                    category="Consistency Champion"
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="submitters">
+          <Card className="bg-gradient-card shadow-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="h-6 w-6 text-warning" />
+                Most Active
+              </CardTitle>
+              <CardDescription>
+                Traders with the most total submissions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {topPerformers.topSubmitters.map((participant, index) => (
+                  <HallOfFameCard
+                    key={participant.id}
+                    participant={participant}
+                    rank={index + 1}
+                    category="Activity Leader"
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
