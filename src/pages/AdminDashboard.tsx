@@ -36,11 +36,13 @@ import {
   Users,
   Shield,
   Trophy,
-  Megaphone
+  Megaphone,
+  ClipboardList
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { CampaignManagement } from '@/components/admin/CampaignManagement';
 import { PendingVerifications } from '@/components/admin/PendingVerifications';
+import { CampaignSubmissions } from '@/components/admin/CampaignSubmissions';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -71,8 +73,7 @@ const AdminDashboard = () => {
   // Filter users based on search term
   const filteredUsers = users.filter(user => 
     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Separate users by status
@@ -235,10 +236,14 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="verifications" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="verifications" className="text-xs sm:text-sm flex items-center gap-1">
               <CheckCircle className="h-3 w-3" />
               Verify
+            </TabsTrigger>
+            <TabsTrigger value="submissions" className="text-xs sm:text-sm flex items-center gap-1">
+              <ClipboardList className="h-3 w-3" />
+              Submissions
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className="text-xs sm:text-sm flex items-center gap-1">
               <Trophy className="h-3 w-3" />
@@ -256,6 +261,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="verifications">
             <PendingVerifications />
+          </TabsContent>
+
+          <TabsContent value="submissions">
+            <CampaignSubmissions />
           </TabsContent>
 
           <TabsContent value="leaderboard">
