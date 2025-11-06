@@ -107,11 +107,21 @@ const AdminDashboard = () => {
 
   // Generate calendar data for submissions view
   const getSubmissionCalendar = () => {
+    if (!activeCampaign) return [];
+
     const calendar = [];
-    const campaignDays = activeCampaign?.days_count || 15;
+    const campaignDays = activeCampaign.days_count || 15;
     
+    // Use UTC to avoid timezone issues. Supabase date strings are like '2025-11-05' which are parsed as UTC midnight.
+    const campaignStartDate = new Date(activeCampaign.start_date + 'T00:00:00Z');
+
     for (let day = 1; day <= campaignDays; day++) {
-      const submission = submissions.find(s => s.day_number === day);
+      const expectedDate = new Date(campaignStartDate);
+      expectedDate.setUTCDate(campaignStartDate.getUTCDate() + day - 1);
+      const expectedDateString = expectedDate.toISOString().split('T')[0];
+
+      const submission = submissions.find(s => s.submission_date === expectedDateString);
+      
       calendar.push({
         day,
         submission,
