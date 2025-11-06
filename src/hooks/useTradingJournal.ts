@@ -160,15 +160,15 @@ export const useTradingJournal = () => {
     if (!user) return { error: 'User not authenticated' };
 
     try {
-      let chartUrl = chartImageUrl || '';
-      let twitterScreenshotUrl = '';
+      let chartPath = chartImageUrl || '';
+      let twitterScreenshotPath = '';
 
       // Upload chart image if provided
       if (chartFile) {
         const fileExt = chartFile.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('trade-charts')
           .upload(fileName, chartFile);
 
@@ -176,11 +176,7 @@ export const useTradingJournal = () => {
           throw uploadError;
         }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('trade-charts')
-          .getPublicUrl(fileName);
-
-        chartUrl = publicUrl;
+        chartPath = uploadData.path;
       }
 
       // Upload Twitter screenshot (required)
@@ -188,7 +184,7 @@ export const useTradingJournal = () => {
         const fileExt = twitterScreenshot.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}_twitter.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from('twitter-screenshots')
           .upload(fileName, twitterScreenshot);
 
@@ -196,11 +192,7 @@ export const useTradingJournal = () => {
           throw uploadError;
         }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('twitter-screenshots')
-          .getPublicUrl(fileName);
-
-        twitterScreenshotUrl = publicUrl;
+        twitterScreenshotPath = uploadData.path;
       }
 
       // Insert trade submission with campaign data
@@ -211,8 +203,8 @@ export const useTradingJournal = () => {
           trade_idea: tradeIdea,
           twitter_link: twitterLink,
           market_pair: marketPair,
-          chart_image_url: chartUrl || null,
-          twitter_screenshot_url: twitterScreenshotUrl || null,
+          chart_image_url: chartPath || null,
+          twitter_screenshot_url: twitterScreenshotPath || null,
           verification_status: 'pending',
           campaign_id: campaignId || null,
           day_number: dayNumber || null,
