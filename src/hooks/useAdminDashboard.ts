@@ -75,103 +75,73 @@ export const useAdminDashboard = () => {
 
   // Fetch all users with their challenge data
   const fetchUsers = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      
       const campaign = await fetchActiveCampaign();
-      
-      const { data, error } = await supabase
-        .from('profiles')
+      if (!campaign) {
+        setUsers([]);
+        return;
+      }
+
+      const { data: participants, error } = await supabase
+        .from('challenge_participants')
         .select(`
-          id,
-          username,
-          full_name,
-          is_challenge_completed,
-          is_disqualified,
-          admin_notes,
-          challenge_participants (
-            total_submissions,
-            current_streak,
-            challenge_start_date,
-            completion_rate,
-            campaign_id
+          *,
+          profiles (
+            id,
+            username,
+            full_name,
+            is_challenge_completed,
+            is_disqualified,
+            admin_notes
           )
         `)
-        .order('created_at', { ascending: false });
+        .eq('campaign_id', campaign.id);
 
       if (error) throw error;
 
-      const usersWithSubmissions = await Promise.all(
-        (data || []).map(async (user) => {
-          let campaignSubmissions = 0;
-          let lastSubmissionDate = null;
-          let completionRate = 0;
-          let participant = null;
-          let currentStreak = 0;
-          let challengeStartDate = '2025-11-06';
-          let campaignDays = 15;
+      const enrichedUsers = await Promise.all(
+        (participants || []).map(async (p) => {
+          const profile = p.profiles;
+          if (!profile) return null;
 
-          if (campaign?.id) {
-            campaignDays = campaign.days_count;
+          const { count: liveSubmissionCount } = await supabase
+            .from('trade_submissions')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', profile.id)
+            .eq('campaign_id', campaign.id);
 
-            const { count } = await supabase
-              .from('trade_submissions')
-              .select('*', { count: 'exact', head: true })
-              .eq('user_id', user.id)
-              .eq('campaign_id', campaign.id);
-            campaignSubmissions = count || 0;
-
-            if (campaignSubmissions > 0) {
-              const { data: lastSub } = await supabase
-                .from('trade_submissions')
-                .select('submission_date')
-                .eq('user_id', user.id)
-                .eq('campaign_id', campaign.id)
-                .order('submission_date', { ascending: false })
-                .limit(1)
-                .single();
-              lastSubmissionDate = lastSub?.submission_date || null;
-            }
-
-            const participants = user.challenge_participants;
-            const participantsArray = Array.isArray(participants) ? participants : (participants ? [participants] : []);
-            participant = participantsArray.find((p: any) => p.campaign_id === campaign.id);
-            
-            if (participant) {
-              currentStreak = participant.current_streak || 0;
-              challengeStartDate = participant.challenge_start_date || campaign.start_date;
-            } else {
-              challengeStartDate = campaign.start_date;
-            }
-
-            completionRate = campaign.days_count 
-              ? Math.round((campaignSubmissions / campaign.days_count) * 100) 
-              : 0;
-          }
+          const { data: lastSub } = await supabase
+            .from('trade_submissions')
+            .select('submission_date')
+            .eq('user_id', profile.id)
+            .eq('campaign_id', campaign.id)
+            .order('submission_date', { ascending: false })
+            .limit(1)
+            .single();
 
           return {
-            id: user.id,
-            username: user.username || 'Anonymous',
-            full_name: user.full_name || 'Anonymous User',
+            id: profile.id,
+            username: profile.username || 'Anonymous',
+            full_name: profile.full_name || 'Anonymous User',
             email: 'Email hidden for privacy',
-            total_submissions: campaignSubmissions,
-            current_streak: currentStreak,
-            last_submission_date: lastSubmissionDate,
-            is_challenge_completed: user.is_challenge_completed || false,
-            is_disqualified: user.is_disqualified || false,
-            admin_notes: user.admin_notes,
-            challenge_start_date: challengeStartDate,
-            completion_rate: completionRate,
-            campaign_days: campaignDays,
+            total_submissions: liveSubmissionCount || 0,
+            current_streak: p.current_streak || 0,
+            last_submission_date: lastSub?.submission_date || null,
+            is_challenge_completed: profile.is_challenge_completed || false,
+            is_disqualified: profile.is_disqualified || false,
+            admin_notes: profile.admin_notes,
+            challenge_start_date: p.challenge_start_date || campaign.start_date,
+            completion_rate: campaign.days_count
+              ? Math.round(((liveSubmissionCount || 0) / campaign.days_count) * 100)
+              : 0,
           };
         })
       );
 
-      const filtered = campaign?.id 
-        ? usersWithSubmissions.filter(u => u.total_submissions > 0) 
-        : usersWithSubmissions;
+      const finalUsers = enrichedUsers.filter((u): u is AdminUser => u !== null && u.total_submissions > 0);
 
-      setUsers(filtered);
+      setUsers(finalUsers);
       setLastUpdate(new Date());
     } catch (error: any) {
       console.error('Error fetching users:', error);
@@ -190,16 +160,13 @@ export const useAdminDashboard = () => {
     try {
       setSubmissionsLoading(true);
       
-      // Get the active campaign first
       const campaign = activeCampaign || await fetchActiveCampaign();
       
       if (!campaign) {
-        console.log('No active campaign found');
         setSubmissions([]);
         return;
       }
       
-      // Fetch submissions for this user - ONLY from active campaign
       const { data, error } = await supabase
         .from('trade_submissions')
         .select('*')
@@ -209,7 +176,6 @@ export const useAdminDashboard = () => {
 
       if (error) throw error;
 
-      console.log('Fetched submissions for user:', userId, 'Campaign:', campaign.id, 'Count:', data?.length);
       setSubmissions(data || []);
     } catch (error: any) {
       console.error('Error fetching submissions:', error);
@@ -237,7 +203,6 @@ export const useAdminDashboard = () => {
 
       if (error) throw error;
 
-      // Refresh users data
       await fetchUsers();
       
       toast({
@@ -264,7 +229,6 @@ export const useAdminDashboard = () => {
 
       if (error) throw error;
 
-      // Update local state
       setSubmissions(prev => 
         prev.map(sub => 
           sub.id === submissionId 
@@ -323,7 +287,6 @@ export const useAdminDashboard = () => {
       }
     });
 
-    // Subscribe to real-time updates with debouncing
     let updateTimeout: NodeJS.Timeout;
     const debouncedFetchUsers = () => {
       clearTimeout(updateTimeout);
@@ -341,10 +304,7 @@ export const useAdminDashboard = () => {
           schema: 'public',
           table: 'profiles'
         },
-        () => {
-          console.log('Profile updated - refreshing leaderboard');
-          debouncedFetchUsers();
-        }
+        debouncedFetchUsers
       )
       .on(
         'postgres_changes',
@@ -353,10 +313,7 @@ export const useAdminDashboard = () => {
           schema: 'public',
           table: 'trade_submissions'
         },
-        (payload) => {
-          console.log('Submission updated:', payload);
-          debouncedFetchUsers();
-        }
+        debouncedFetchUsers
       )
       .on(
         'postgres_changes',
@@ -365,10 +322,7 @@ export const useAdminDashboard = () => {
           schema: 'public',
           table: 'challenge_participants'
         },
-        () => {
-          console.log('Participant stats updated');
-          debouncedFetchUsers();
-        }
+        debouncedFetchUsers
       )
       .on(
         'postgres_changes',
@@ -378,7 +332,6 @@ export const useAdminDashboard = () => {
           table: 'campaigns'
         },
         () => {
-          console.log('Campaign updated');
           fetchActiveCampaign();
           debouncedFetchUsers();
         }
