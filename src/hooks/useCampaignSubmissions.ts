@@ -67,12 +67,14 @@ export const useCampaignSubmissions = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Fetch active campaign
+      // 1. Fetch active campaign (more robust query)
       const { data: campaignData, error: campaignError } = await supabase
         .from('campaigns')
         .select('id, title, days_count, start_date')
         .eq('status', 'live')
         .eq('is_active', true)
+        .order('start_date', { ascending: false })
+        .limit(1)
         .single();
 
       if (campaignError || !campaignData) {
