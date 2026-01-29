@@ -9,6 +9,9 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  optimizeDeps: {
+    include: ["react", "react-dom", "@tanstack/react-query"],
+  },
   plugins: [
     react(),
     mode === 'development' &&
@@ -18,5 +21,6 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"],
   },
 }));
