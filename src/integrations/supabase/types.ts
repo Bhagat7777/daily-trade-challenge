@@ -608,6 +608,60 @@ export type Database = {
           },
         ]
       }
+      scorecards: {
+        Row: {
+          campaign_id: string
+          completed_days: number
+          consistency_score: number
+          created_at: string | null
+          discipline_score: number
+          id: string
+          rule_score: number
+          total_score: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          completed_days?: number
+          consistency_score?: number
+          created_at?: string | null
+          discipline_score?: number
+          id?: string
+          rule_score?: number
+          total_score?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          completed_days?: number
+          consistency_score?: number
+          created_at?: string | null
+          discipline_score?: number
+          id?: string
+          rule_score?: number
+          total_score?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scorecards_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scorecards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_settings: {
         Row: {
           created_at: string
@@ -647,6 +701,8 @@ export type Database = {
           chart_image_url: string | null
           created_at: string | null
           day_number: number | null
+          has_hashtag: boolean | null
+          has_tagged_account: boolean | null
           id: string
           market_pair: string | null
           reviewed_at: string | null
@@ -670,6 +726,8 @@ export type Database = {
           chart_image_url?: string | null
           created_at?: string | null
           day_number?: number | null
+          has_hashtag?: boolean | null
+          has_tagged_account?: boolean | null
           id?: string
           market_pair?: string | null
           reviewed_at?: string | null
@@ -693,6 +751,8 @@ export type Database = {
           chart_image_url?: string | null
           created_at?: string | null
           day_number?: number | null
+          has_hashtag?: boolean | null
+          has_tagged_account?: boolean | null
           id?: string
           market_pair?: string | null
           reviewed_at?: string | null
@@ -862,6 +922,20 @@ export type Database = {
           start_date: string
           title: string
           type: string
+        }[]
+      }
+      get_scorecard_leaderboard: {
+        Args: { p_campaign_id: string }
+        Returns: {
+          completed_days: number
+          consistency_score: number
+          discipline_score: number
+          full_name: string
+          rank: number
+          rule_score: number
+          total_score: number
+          user_id: string
+          username: string
         }[]
       }
       is_admin: { Args: never; Returns: boolean }

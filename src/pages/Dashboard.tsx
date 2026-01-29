@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTradingJournal } from '@/hooks/useTradingJournal';
+import { useScorecard } from '@/hooks/useScorecard';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import SocialLinks from '@/components/ui/social-links';
+import ScorecardDisplay from '@/components/scorecard/ScorecardDisplay';
+import ScorecardLeaderboard from '@/components/scorecard/ScorecardLeaderboard';
 import { format } from 'date-fns';
 import { 
   Calendar, 
@@ -20,7 +24,9 @@ import {
   Clock,
   CalendarDays,
   Lock,
-  Unlock
+  Unlock,
+  Award,
+  Trophy
 } from 'lucide-react';
 
 interface Campaign {
@@ -38,6 +44,14 @@ const Dashboard = () => {
   const { userStats, loading, canSubmitToday, submissions } = useTradingJournal();
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
   const [campaignLoading, setCampaignLoading] = useState(true);
+  
+  // Scorecard data
+  const { 
+    scorecard, 
+    leaderboard, 
+    dailyStatus, 
+    loading: scorecardLoading 
+  } = useScorecard();
 
   useEffect(() => {
     const fetchActiveCampaign = async () => {
@@ -371,6 +385,48 @@ const Dashboard = () => {
               })}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Scorecard Section */}
+      <Card className="bg-gradient-card shadow-card mt-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-primary" />
+            Your Scorecard
+          </CardTitle>
+          <CardDescription>
+            Track your points across consistency, rule compliance, and discipline
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="my-score" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="my-score" className="flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                My Score
+              </TabsTrigger>
+              <TabsTrigger value="leaderboard" className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                Leaderboard
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="my-score">
+              <ScorecardDisplay 
+                scorecard={scorecard} 
+                dailyStatus={dailyStatus}
+                daysCount={daysCount}
+              />
+            </TabsContent>
+            <TabsContent value="leaderboard">
+              <ScorecardLeaderboard 
+                leaderboard={leaderboard}
+                loading={scorecardLoading}
+                daysCount={daysCount}
+                currentUserId={user?.id}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

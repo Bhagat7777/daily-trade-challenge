@@ -233,7 +233,9 @@ export const useTradingJournal = () => {
     chartFile?: File,
     twitterScreenshot?: File,
     campaignId?: string,
-    dayNumber?: number
+    dayNumber?: number,
+    hasHashtag?: boolean,
+    hasTaggedAccount?: boolean
   ) => {
     if (!user) return { error: 'User not authenticated' };
 
@@ -273,7 +275,7 @@ export const useTradingJournal = () => {
         twitterScreenshotPath = uploadData.path;
       }
 
-      // Insert trade submission with campaign data
+      // Insert trade submission with campaign data and scorecard fields
       const { error } = await supabase
         .from('trade_submissions')
         .insert({
@@ -286,6 +288,8 @@ export const useTradingJournal = () => {
           verification_status: 'pending',
           campaign_id: campaignId || null,
           day_number: dayNumber || null,
+          has_hashtag: hasHashtag || false,
+          has_tagged_account: hasTaggedAccount || false,
         });
 
       if (error) {

@@ -20,6 +20,7 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import AdminLeaderboard from '@/components/admin/AdminLeaderboard';
+import AdminScorecardLeaderboard from '@/components/admin/AdminScorecardLeaderboard';
 import { ProofVerification } from '@/components/admin/ProofVerification';
 import {
   AlertTriangle,
@@ -37,7 +38,8 @@ import {
   Shield,
   Trophy,
   Megaphone,
-  ClipboardList
+  ClipboardList,
+  Award
 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { CampaignManagement } from '@/components/admin/CampaignManagement';
@@ -246,7 +248,7 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="verifications" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
             <TabsTrigger value="verifications" className="text-xs sm:text-sm flex items-center gap-1">
               <CheckCircle className="h-3 w-3" />
               Verify
@@ -254,6 +256,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="submissions" className="text-xs sm:text-sm flex items-center gap-1">
               <ClipboardList className="h-3 w-3" />
               Submissions
+            </TabsTrigger>
+            <TabsTrigger value="scorecard" className="text-xs sm:text-sm flex items-center gap-1">
+              <Award className="h-3 w-3" />
+              Scorecard
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className="text-xs sm:text-sm flex items-center gap-1">
               <Trophy className="h-3 w-3" />
@@ -275,6 +281,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="submissions">
             <CampaignSubmissions />
+          </TabsContent>
+
+          <TabsContent value="scorecard">
+            <AdminScorecardLeaderboard campaignId={activeCampaign?.id} />
           </TabsContent>
 
           <TabsContent value="leaderboard">
