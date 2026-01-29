@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,7 +21,9 @@ import {
   FileImage,
   Lock,
   CalendarDays,
-  Info
+  Info,
+  Hash,
+  AtSign
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -50,6 +53,8 @@ const SubmitTrade = () => {
     twitterLink: '',
     marketPair: '',
     chartImageUrl: '',
+    hasHashtag: false,
+    hasTaggedAccount: false,
   });
   const [chartFile, setChartFile] = useState<File | null>(null);
   const [twitterScreenshot, setTwitterScreenshot] = useState<File | null>(null);
@@ -303,7 +308,9 @@ const SubmitTrade = () => {
       chartFile || undefined,
       twitterScreenshot,
       activeCampaign?.id,
-      currentDay
+      currentDay,
+      formData.hasHashtag,
+      formData.hasTaggedAccount
     );
 
     if (!error) {
@@ -419,6 +426,52 @@ const SubmitTrade = () => {
                     </label>
                   </div>
                 </div>
+
+                {/* Scorecard Confirmation Section */}
+                <Card className="bg-primary/5 border-primary/20">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Info className="h-4 w-4 text-primary" />
+                      Scorecard Points (for scoring)
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Confirm your Twitter post includes these for extra points
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="has-hashtag"
+                        checked={formData.hasHashtag}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, hasHashtag: !!checked })
+                        }
+                      />
+                      <label htmlFor="has-hashtag" className="flex items-center gap-2 text-sm cursor-pointer">
+                        <Hash className="h-4 w-4 text-primary" />
+                        I used the correct hashtag (#7DaysTradingChallenge)
+                        <span className="text-xs text-success font-medium">+2 pts</span>
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="has-tagged"
+                        checked={formData.hasTaggedAccount}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, hasTaggedAccount: !!checked })
+                        }
+                      />
+                      <label htmlFor="has-tagged" className="flex items-center gap-2 text-sm cursor-pointer">
+                        <AtSign className="h-4 w-4 text-primary" />
+                        I tagged @propfirm_forex
+                        <span className="text-xs text-success font-medium">+1 pt</span>
+                      </label>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      📊 Chart upload = +1 pt | 📝 Trade analysis = +1 pt
+                    </p>
+                  </CardContent>
+                </Card>
 
                 {/* Market Pair */}
                 <div className="space-y-2">
