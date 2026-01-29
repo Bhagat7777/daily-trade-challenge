@@ -68,23 +68,27 @@ const SubmitTrade = () => {
         // Update campaign statuses first
         await supabase.rpc('update_campaign_status');
 
-        let campaignQuery = supabase.from('campaigns').select('*');
+        let campaign: Campaign | null = null;
 
         if (campaignId) {
-          campaignQuery = campaignQuery.eq('id', campaignId).single();
+          const { data, error } = await supabase
+            .from('campaigns')
+            .select('id, title, start_date, end_date, status, days_count, rules')
+            .eq('id', campaignId)
+            .maybeSingle();
+          
+          if (error) throw error;
+          campaign = data;
         } else {
-          campaignQuery = campaignQuery
+          const { data, error } = await supabase
+            .from('campaigns')
+            .select('id, title, start_date, end_date, status, days_count, rules')
             .eq('is_active', true)
             .eq('status', 'live')
             .maybeSingle();
-        }
-
-        const { data: campaign, error } = await campaignQuery;
-
-        if (error) {
-          console.error('Error fetching campaign:', error);
-          setCampaignLoading(false);
-          return;
+          
+          if (error) throw error;
+          campaign = data;
         }
 
         if (campaign) {
