@@ -5,22 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import SocialLinks from '@/components/ui/social-links';
-import { 
-  TrendingUp, 
-  Calendar, 
-  Trophy, 
-  CheckCircle, 
-  Twitter, 
-  BarChart3, 
-  Users,
-  Target,
-  Zap
-} from 'lucide-react';
-
+import { TrendingUp, Calendar, Trophy, CheckCircle, Twitter, BarChart3, Users, Target, Zap } from 'lucide-react';
 const LandingPage = React.memo(() => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -28,9 +18,7 @@ const LandingPage = React.memo(() => {
       navigate('/auth');
     }
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section className="pt-20 pb-32 px-4">
         <div className="container mx-auto text-center space-y-8">
@@ -42,9 +30,8 @@ const LandingPage = React.memo(() => {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight">
-              15 Days of Trading
-              <span className="block text-primary">Journal Challenge</span>
+            <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight">PropFirmKnowledge Trading
+Journal Challenge<span className="block text-primary">Journal Challenge</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Build consistency, track your progress, and join a community of traders 
@@ -53,19 +40,10 @@ const LandingPage = React.memo(() => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              onClick={handleGetStarted}
-              className="bg-gradient-primary hover:opacity-90 shadow-success text-lg px-8 py-3"
-            >
+            <Button size="lg" onClick={handleGetStarted} className="bg-gradient-primary hover:opacity-90 shadow-success text-lg px-8 py-3">
               {user ? 'Go to Dashboard' : 'Join the Challenge'}
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate('/rules')}
-              className="text-lg px-8 py-3"
-            >
+            <Button size="lg" variant="outline" onClick={() => navigate('/rules')} className="text-lg px-8 py-3">
               Learn the Rules
             </Button>
           </div>
@@ -238,21 +216,14 @@ const LandingPage = React.memo(() => {
             <p className="text-xl text-muted-foreground">
               Join thousands of traders who are building better trading habits through daily journaling.
             </p>
-            <Button
-              size="lg"
-              onClick={handleGetStarted}
-              className="bg-gradient-primary hover:opacity-90 shadow-success text-lg px-8 py-3"
-            >
+            <Button size="lg" onClick={handleGetStarted} className="bg-gradient-primary hover:opacity-90 shadow-success text-lg px-8 py-3">
               <Zap className="mr-2 h-5 w-5" />
               {user ? 'Go to Dashboard' : 'Start Your Journey'}
             </Button>
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 });
-
 LandingPage.displayName = 'LandingPage';
-
 export default LandingPage;
