@@ -33,16 +33,15 @@ const Header = () => {
   return <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="p-1.5 bg-gradient-primary rounded-lg">
-            <TrendingUp className="h-5 w-5 text-primary-foreground" />
+        <div className="flex items-center gap-1.5 sm:gap-2 cursor-pointer min-w-0" onClick={() => navigate('/')}>
+          <div className="p-1 sm:p-1.5 bg-gradient-primary rounded-lg flex-shrink-0">
+            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary-foreground" />
           </div>
-          <div className="flex items-center gap-1">
-            <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-            <span className="font-bold text-sm sm:text-lg text-foreground hidden sm:block">PropfirmKnowledge Day Trading Journal</span>
-            <span className="font-bold text-sm text-foreground sm:hidden">
-              Trading Journal
-            </span>
+          <div className="flex items-center gap-1 min-w-0">
+            <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
+            <span className="font-bold text-foreground hidden md:block text-base lg:text-lg">PropfirmKnowledge Trading Journal</span>
+            <span className="font-bold text-foreground hidden sm:block md:hidden text-sm">PFK Journal</span>
+            <span className="font-bold text-xs text-foreground sm:hidden truncate">Journal</span>
           </div>
         </div>
 
