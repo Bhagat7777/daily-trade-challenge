@@ -26,6 +26,7 @@ import {
   AtSign
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import PropfirmPromoCard from '@/components/propfirm-campaigns/PropfirmPromoCard';
 
 interface Campaign {
   id: string;
@@ -323,7 +324,9 @@ const SubmitTrade = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Form Column */}
+          <div className="lg:col-span-2 space-y-8">
           {/* Header */}
           <div className="space-y-2 mb-6">
             <div className="flex items-center gap-2 mb-2">
@@ -524,6 +527,14 @@ const SubmitTrade = () => {
               </form>
             </CardContent>
           </Card>
+          </div>
+
+          {/* Sidebar - PropFirm Promo */}
+          <div className="hidden lg:block">
+            <div className="sticky top-8">
+              <PropfirmPromoCard location="journal" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

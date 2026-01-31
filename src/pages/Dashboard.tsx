@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import SocialLinks from '@/components/ui/social-links';
 import ScorecardDisplay from '@/components/scorecard/ScorecardDisplay';
 import ScorecardLeaderboard from '@/components/scorecard/ScorecardLeaderboard';
+import PropfirmBanner from '@/components/propfirm-campaigns/PropfirmBanner';
 import { format } from 'date-fns';
 import { 
   Calendar, 
@@ -198,6 +199,9 @@ const Dashboard = () => {
 
   return (
     <div className="pb-20 md:pb-0">
+      {/* PropFirm Promotional Banner */}
+      <PropfirmBanner location="dashboard" />
+
       {/* Welcome Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-foreground">

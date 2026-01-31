@@ -45,6 +45,7 @@ import { Navigate } from 'react-router-dom';
 import { CampaignManagement } from '@/components/admin/CampaignManagement';
 import { PendingVerifications } from '@/components/admin/PendingVerifications';
 import { CampaignSubmissions } from '@/components/admin/CampaignSubmissions';
+import PropfirmCampaignAdmin from '@/components/propfirm-campaigns/PropfirmCampaignAdmin';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
@@ -248,7 +249,7 @@ const AdminDashboard = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="verifications" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
+          <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10">
             <TabsTrigger value="verifications" className="text-xs sm:text-sm flex items-center gap-1">
               <CheckCircle className="h-3 w-3" />
               Verify
@@ -268,6 +269,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="campaigns" className="text-xs sm:text-sm flex items-center gap-1">
               <Megaphone className="h-3 w-3" />
               Campaigns
+            </TabsTrigger>
+            <TabsTrigger value="promos" className="text-xs sm:text-sm flex items-center gap-1">
+              <TrendingUp className="h-3 w-3" />
+              Promos
             </TabsTrigger>
             <TabsTrigger value="all" className="text-xs sm:text-sm">All ({filteredUsers.length})</TabsTrigger>
             <TabsTrigger value="active" className="text-xs sm:text-sm">Active ({activeUsers.length})</TabsTrigger>
@@ -300,6 +305,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="campaigns">
             <CampaignManagement />
+          </TabsContent>
+
+          <TabsContent value="promos">
+            <PropfirmCampaignAdmin />
           </TabsContent>
 
           <TabsContent value="all">

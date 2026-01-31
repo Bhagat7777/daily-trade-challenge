@@ -543,6 +543,109 @@ export type Database = {
         }
         Relationships: []
       }
+      propfirm_campaign_clicks: {
+        Row: {
+          campaign_id: string | null
+          click_type: string | null
+          clicked_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          click_type?: string | null
+          clicked_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          click_type?: string | null
+          clicked_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "propfirm_campaign_clicks_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "propfirm_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      propfirm_campaigns: {
+        Row: {
+          banner_image_url: string | null
+          campaign_type: string | null
+          coupon_code: string | null
+          created_at: string | null
+          created_by: string | null
+          cta_link: string
+          cta_text: string | null
+          description: string | null
+          display_locations: string[] | null
+          end_time: string
+          id: string
+          is_enabled: boolean | null
+          logo_url: string | null
+          priority: number | null
+          prop_firm_name: string
+          start_time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          banner_image_url?: string | null
+          campaign_type?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          cta_link: string
+          cta_text?: string | null
+          description?: string | null
+          display_locations?: string[] | null
+          end_time: string
+          id?: string
+          is_enabled?: boolean | null
+          logo_url?: string | null
+          priority?: number | null
+          prop_firm_name: string
+          start_time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          banner_image_url?: string | null
+          campaign_type?: string | null
+          coupon_code?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          cta_link?: string
+          cta_text?: string | null
+          description?: string | null
+          display_locations?: string[] | null
+          end_time?: string
+          id?: string
+          is_enabled?: boolean | null
+          logo_url?: string | null
+          priority?: number | null
+          prop_firm_name?: string
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "propfirm_campaigns_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           account_size: string | null
@@ -923,6 +1026,35 @@ export type Database = {
           title: string
           type: string
         }[]
+      }
+      get_active_propfirm_campaigns: {
+        Args: { p_location?: string }
+        Returns: {
+          banner_image_url: string | null
+          campaign_type: string | null
+          coupon_code: string | null
+          created_at: string | null
+          created_by: string | null
+          cta_link: string
+          cta_text: string | null
+          description: string | null
+          display_locations: string[] | null
+          end_time: string
+          id: string
+          is_enabled: boolean | null
+          logo_url: string | null
+          priority: number | null
+          prop_firm_name: string
+          start_time: string
+          title: string
+          updated_at: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "propfirm_campaigns"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       get_scorecard_leaderboard: {
         Args: { p_campaign_id: string }
