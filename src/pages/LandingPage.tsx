@@ -30,8 +30,7 @@ const LandingPage = React.memo(() => {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight pr-0">PropFirm Knowledge Trading
-Journal Challenge<span className="block text-primary">Journal Challenge</span>
+            <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight pr-0">PropFirm Knowledge Trading  <span className="block text-primary">Journal Challenge</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Build consistency, track your progress, and join a community of traders 
@@ -55,7 +54,7 @@ Journal Challenge<span className="block text-primary">Journal Challenge</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              <span>15 day challenge</span>
+              <span>Trading challenge</span>
             </div>
             <div className="flex items-center gap-2">
               <Trophy className="h-5 w-5" />
