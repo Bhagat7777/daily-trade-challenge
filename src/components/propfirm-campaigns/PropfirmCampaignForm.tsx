@@ -6,8 +6,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { PropfirmCampaign, CreateCampaignData } from '@/hooks/usePropfirmCampaignAdmin';
 import { format } from 'date-fns';
+
+interface FormData {
+  title: string;
+  description: string;
+  prop_firm_name: string;
+  logo_url: string;
+  banner_image_url: string;
+  cta_text: string;
+  cta_link: string;
+  coupon_code: string;
+  start_date: Date | undefined;
+  end_date: Date | undefined;
+  priority: number;
+  is_enabled: boolean;
+  display_locations: string[];
+  campaign_type: string;
+}
 
 interface PropfirmCampaignFormProps {
   open: boolean;
@@ -29,7 +47,7 @@ const PropfirmCampaignForm: React.FC<PropfirmCampaignFormProps> = ({
   onSubmit,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<CreateCampaignData>({
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
     prop_firm_name: '',
@@ -38,8 +56,8 @@ const PropfirmCampaignForm: React.FC<PropfirmCampaignFormProps> = ({
     cta_text: 'Get Started',
     cta_link: '',
     coupon_code: '',
-    start_time: '',
-    end_time: '',
+    start_date: undefined,
+    end_date: undefined,
     priority: 0,
     is_enabled: true,
     display_locations: ['dashboard'],
@@ -58,8 +76,8 @@ const PropfirmCampaignForm: React.FC<PropfirmCampaignFormProps> = ({
         cta_text: campaign.cta_text,
         cta_link: campaign.cta_link,
         coupon_code: campaign.coupon_code || '',
-        start_time: campaign.start_time ? format(new Date(campaign.start_time), "yyyy-MM-dd'T'HH:mm") : '',
-        end_time: campaign.end_time ? format(new Date(campaign.end_time), "yyyy-MM-dd'T'HH:mm") : '',
+        start_date: campaign.start_time ? new Date(campaign.start_time) : undefined,
+        end_date: campaign.end_time ? new Date(campaign.end_time) : undefined,
         priority: campaign.priority,
         is_enabled: campaign.is_enabled,
         display_locations: campaign.display_locations || ['dashboard'],
@@ -76,8 +94,8 @@ const PropfirmCampaignForm: React.FC<PropfirmCampaignFormProps> = ({
         cta_text: 'Get Started',
         cta_link: '',
         coupon_code: '',
-        start_time: '',
-        end_time: '',
+        start_date: undefined,
+        end_date: undefined,
         priority: 0,
         is_enabled: true,
         display_locations: ['dashboard'],
@@ -88,12 +106,28 @@ const PropfirmCampaignForm: React.FC<PropfirmCampaignFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.start_date || !formData.end_date) {
+      return;
+    }
+    
     setLoading(true);
 
     const success = await onSubmit({
-      ...formData,
-      start_time: new Date(formData.start_time).toISOString(),
-      end_time: new Date(formData.end_time).toISOString(),
+      title: formData.title,
+      description: formData.description,
+      prop_firm_name: formData.prop_firm_name,
+      logo_url: formData.logo_url,
+      banner_image_url: formData.banner_image_url,
+      cta_text: formData.cta_text,
+      cta_link: formData.cta_link,
+      coupon_code: formData.coupon_code,
+      start_time: formData.start_date.toISOString(),
+      end_time: formData.end_date.toISOString(),
+      priority: formData.priority,
+      is_enabled: formData.is_enabled,
+      display_locations: formData.display_locations,
+      campaign_type: formData.campaign_type,
     });
 
     setLoading(false);
@@ -228,23 +262,19 @@ const PropfirmCampaignForm: React.FC<PropfirmCampaignFormProps> = ({
           {/* Scheduling */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="start_time">Start Date & Time *</Label>
-              <Input
-                id="start_time"
-                type="datetime-local"
-                value={formData.start_time}
-                onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                required
+              <Label>Start Date & Time *</Label>
+              <DateTimePicker
+                value={formData.start_date}
+                onChange={(date) => setFormData({ ...formData, start_date: date })}
+                placeholder="Select start date & time"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="end_time">End Date & Time *</Label>
-              <Input
-                id="end_time"
-                type="datetime-local"
-                value={formData.end_time}
-                onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                required
+              <Label>End Date & Time *</Label>
+              <DateTimePicker
+                value={formData.end_date}
+                onChange={(date) => setFormData({ ...formData, end_date: date })}
+                placeholder="Select end date & time"
               />
             </div>
           </div>
