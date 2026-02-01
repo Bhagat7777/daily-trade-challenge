@@ -804,6 +804,8 @@ export type Database = {
           chart_image_url: string | null
           created_at: string | null
           day_number: number | null
+          has_analysis: boolean | null
+          has_chart: boolean | null
           has_hashtag: boolean | null
           has_tagged_account: boolean | null
           id: string
@@ -829,6 +831,8 @@ export type Database = {
           chart_image_url?: string | null
           created_at?: string | null
           day_number?: number | null
+          has_analysis?: boolean | null
+          has_chart?: boolean | null
           has_hashtag?: boolean | null
           has_tagged_account?: boolean | null
           id?: string
@@ -854,6 +858,8 @@ export type Database = {
           chart_image_url?: string | null
           created_at?: string | null
           day_number?: number | null
+          has_analysis?: boolean | null
+          has_chart?: boolean | null
           has_hashtag?: boolean | null
           has_tagged_account?: boolean | null
           id?: string

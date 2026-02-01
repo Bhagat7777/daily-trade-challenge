@@ -235,7 +235,9 @@ export const useTradingJournal = () => {
     campaignId?: string,
     dayNumber?: number,
     hasHashtag?: boolean,
-    hasTaggedAccount?: boolean
+    hasTaggedAccount?: boolean,
+    hasChart?: boolean,
+    hasAnalysis?: boolean
   ) => {
     if (!user) return { error: 'User not authenticated' };
 
@@ -290,6 +292,8 @@ export const useTradingJournal = () => {
           day_number: dayNumber || null,
           has_hashtag: hasHashtag || false,
           has_tagged_account: hasTaggedAccount || false,
+          has_chart: hasChart || false,
+          has_analysis: hasAnalysis || false,
         });
 
       if (error) {
