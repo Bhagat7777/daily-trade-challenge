@@ -50,12 +50,13 @@ const SubmitTrade = () => {
   const [isDayUnlocked, setIsDayUnlocked] = useState<boolean>(false);
 
   const [formData, setFormData] = useState({
-    tradeIdea: '',
     twitterLink: '',
     marketPair: '',
     chartImageUrl: '',
     hasHashtag: false,
     hasTaggedAccount: false,
+    hasChart: false,
+    hasAnalysis: false,
   });
   const [chartFile, setChartFile] = useState<File | null>(null);
   const [twitterScreenshot, setTwitterScreenshot] = useState<File | null>(null);
@@ -263,15 +264,6 @@ const SubmitTrade = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.tradeIdea.trim()) {
-      toast({
-        title: "Missing trade idea",
-        description: "Please provide your trade analysis",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!formData.twitterLink.trim()) {
       toast({
         title: "Missing Twitter link",
@@ -302,7 +294,7 @@ const SubmitTrade = () => {
     setLoading(true);
 
     const { error } = await submitTradeIdea(
-      formData.tradeIdea,
+      'Submitted via form', // Default trade idea text
       formData.twitterLink,
       formData.marketPair,
       formData.chartImageUrl,
@@ -311,7 +303,9 @@ const SubmitTrade = () => {
       activeCampaign?.id,
       currentDay,
       formData.hasHashtag,
-      formData.hasTaggedAccount
+      formData.hasTaggedAccount,
+      formData.hasChart,
+      formData.hasAnalysis
     );
 
     if (!error) {
@@ -361,21 +355,6 @@ const SubmitTrade = () => {
           <Card className="bg-card border-border">
             <CardContent className="pt-6">
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Trade Idea */}
-                <div className="space-y-2">
-                  <Label htmlFor="trade-idea">Trade Idea *</Label>
-                  <Textarea
-                    id="trade-idea"
-                    placeholder="Describe your trade setup, entry/exit points, and reasoning..."
-                    value={formData.tradeIdea}
-                    onChange={(e) =>
-                      setFormData({ ...formData, tradeIdea: e.target.value })
-                    }
-                    rows={4}
-                    required
-                    className="resize-none bg-card"
-                  />
-                </div>
 
                 {/* Twitter Link */}
                 <div className="space-y-2">

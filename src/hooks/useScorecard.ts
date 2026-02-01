@@ -151,8 +151,8 @@ export const useScorecard = (campaignId?: string) => {
         submitted: !!submission,
         has_hashtag: submission?.has_hashtag || false,
         has_tagged_account: submission?.has_tagged_account || false,
-        has_chart: !!(submission?.chart_image_url),
-        has_analysis: !!(submission?.trade_idea && submission.trade_idea.length > 10),
+        has_chart: submission?.has_chart || false,
+        has_analysis: submission?.has_analysis || false,
       });
     }
 
