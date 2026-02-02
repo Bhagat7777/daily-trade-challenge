@@ -237,7 +237,8 @@ export const useTradingJournal = () => {
     hasHashtag?: boolean,
     hasTaggedAccount?: boolean,
     hasChart?: boolean,
-    hasAnalysis?: boolean
+    hasAnalysis?: boolean,
+    hasTradeIdea?: boolean
   ) => {
     if (!user) return { error: 'User not authenticated' };
 
@@ -294,6 +295,7 @@ export const useTradingJournal = () => {
           has_tagged_account: hasTaggedAccount || false,
           has_chart: hasChart || false,
           has_analysis: hasAnalysis || false,
+          has_trade_idea: hasTradeIdea || false,
         });
 
       if (error) {

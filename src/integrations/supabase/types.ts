@@ -808,6 +808,7 @@ export type Database = {
           has_chart: boolean | null
           has_hashtag: boolean | null
           has_tagged_account: boolean | null
+          has_trade_idea: boolean | null
           id: string
           market_pair: string | null
           reviewed_at: string | null
@@ -835,6 +836,7 @@ export type Database = {
           has_chart?: boolean | null
           has_hashtag?: boolean | null
           has_tagged_account?: boolean | null
+          has_trade_idea?: boolean | null
           id?: string
           market_pair?: string | null
           reviewed_at?: string | null
@@ -862,6 +864,7 @@ export type Database = {
           has_chart?: boolean | null
           has_hashtag?: boolean | null
           has_tagged_account?: boolean | null
+          has_trade_idea?: boolean | null
           id?: string
           market_pair?: string | null
           reviewed_at?: string | null

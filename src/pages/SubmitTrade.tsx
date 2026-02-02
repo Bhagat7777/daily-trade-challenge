@@ -57,6 +57,7 @@ const SubmitTrade = () => {
     hasTaggedAccount: false,
     hasChart: false,
     hasAnalysis: false,
+    hasTradeIdea: false,
   });
   const [chartFile, setChartFile] = useState<File | null>(null);
   const [twitterScreenshot, setTwitterScreenshot] = useState<File | null>(null);
@@ -305,7 +306,8 @@ const SubmitTrade = () => {
       formData.hasHashtag,
       formData.hasTaggedAccount,
       formData.hasChart,
-      formData.hasAnalysis
+      formData.hasAnalysis,
+      formData.hasTradeIdea
     );
 
     if (!error) {
@@ -449,9 +451,48 @@ const SubmitTrade = () => {
                         <span className="text-xs text-success font-medium">+1 pt</span>
                       </label>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      📊 Chart upload = +1 pt | 📝 Trade analysis = +1 pt
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="has-trade-idea"
+                        checked={formData.hasTradeIdea}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, hasTradeIdea: !!checked })
+                        }
+                      />
+                      <label htmlFor="has-trade-idea" className="flex items-center gap-2 text-sm cursor-pointer">
+                        <TrendingUp className="h-4 w-4 text-primary" />
+                        I included a trade idea/setup
+                        <span className="text-xs text-success font-medium">+1 pt</span>
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="has-chart"
+                        checked={formData.hasChart}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, hasChart: !!checked })
+                        }
+                      />
+                      <label htmlFor="has-chart" className="flex items-center gap-2 text-sm cursor-pointer">
+                        <FileImage className="h-4 w-4 text-primary" />
+                        I included a chart image
+                        <span className="text-xs text-success font-medium">+1 pt</span>
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        id="has-analysis"
+                        checked={formData.hasAnalysis}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, hasAnalysis: !!checked })
+                        }
+                      />
+                      <label htmlFor="has-analysis" className="flex items-center gap-2 text-sm cursor-pointer">
+                        <Info className="h-4 w-4 text-primary" />
+                        I included trade analysis
+                        <span className="text-xs text-success font-medium">+1 pt</span>
+                      </label>
+                    </div>
                   </CardContent>
                 </Card>
 
