@@ -200,6 +200,13 @@ const ScorecardDisplay: React.FC<ScorecardDisplayProps> = ({
                         {day.has_analysis ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
                         📝
                       </Badge>
+                      <Badge 
+                        variant={day.has_trade_idea ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {day.has_trade_idea ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
+                        💡
+                      </Badge>
                     </>
                   ) : (
                     <Badge variant="outline" className="text-xs text-muted-foreground">

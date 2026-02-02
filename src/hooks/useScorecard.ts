@@ -36,6 +36,7 @@ export interface DailySubmissionStatus {
   has_tagged_account: boolean;
   has_chart: boolean;
   has_analysis: boolean;
+  has_trade_idea: boolean;
 }
 
 export const useScorecard = (campaignId?: string) => {
@@ -153,6 +154,7 @@ export const useScorecard = (campaignId?: string) => {
         has_tagged_account: submission?.has_tagged_account || false,
         has_chart: submission?.has_chart || false,
         has_analysis: submission?.has_analysis || false,
+        has_trade_idea: submission?.has_trade_idea || false,
       });
     }
 
