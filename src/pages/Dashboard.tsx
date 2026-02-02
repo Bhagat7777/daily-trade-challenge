@@ -198,69 +198,69 @@ const Dashboard = () => {
   const progressPercentage = Math.round((campaignSubmissions / daysCount) * 100);
 
   return (
-    <div className="pb-20 md:pb-0">
+    <div className="pb-20 md:pb-0 space-y-4 sm:space-y-6">
       {/* PropFirm Promotional Banner */}
       <PropfirmBanner location="dashboard" />
 
       {/* Welcome Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">
+      <div className="space-y-1 sm:space-y-2">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
           Welcome back, {user?.user_metadata?.username || user?.email?.split('@')[0]}!
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Track your progress and maintain your trading journal consistency.
         </p>
       </div>
 
       {/* Progress Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         <Card className="bg-gradient-card shadow-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Day</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium">Current Day</CardTitle>
+            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">Day {currentDay}</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="text-lg sm:text-2xl font-bold">Day {currentDay}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               of {daysCount}
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-card shadow-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium">Completed</CardTitle>
+            <Target className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{campaignSubmissions}</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="text-lg sm:text-2xl font-bold">{campaignSubmissions}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               out of {daysCount} days
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-card shadow-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Streak</CardTitle>
-            <Flame className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium">Streak</CardTitle>
+            <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{calculatedStreak}</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="text-lg sm:text-2xl font-bold">{calculatedStreak}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               consecutive days
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-card shadow-card">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completion</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-xs sm:text-sm font-medium">Completion</CardTitle>
+            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{progressPercentage}%</div>
-            <p className="text-xs text-muted-foreground">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="text-lg sm:text-2xl font-bold">{progressPercentage}%</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
               of challenge
             </p>
           </CardContent>
@@ -268,31 +268,31 @@ const Dashboard = () => {
       </div>
 
       {/* Progress Bar */}
-      <Card className="bg-gradient-card shadow-card mt-8">
-        <CardHeader>
-          <CardTitle>Challenge Progress</CardTitle>
-          <CardDescription>
+      <Card className="bg-gradient-card shadow-card">
+        <CardHeader className="pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg">Challenge Progress</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             {activeCampaign ? `Your journey through the ${activeCampaign.title}` : `Your journey through the ${daysCount}-day trading journal challenge`}
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs sm:text-sm">
               <span>Progress</span>
               <span>{progressPercentage}%</span>
             </div>
-            <Progress value={progressPercentage} className="h-3" />
+            <Progress value={progressPercentage} className="h-2 sm:h-3" />
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+            <span className="text-xs sm:text-sm text-muted-foreground">
               {campaignSubmissions} / {daysCount} days completed
             </span>
             {canSubmitToday() ? (
-              <Badge variant="default" className="bg-success text-success-foreground">
+              <Badge variant="default" className="bg-success text-success-foreground w-fit text-xs">
                 Ready to submit today
               </Badge>
             ) : (
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="w-fit text-xs">
                 Today's submission complete
               </Badge>
             )}
@@ -301,13 +301,13 @@ const Dashboard = () => {
       </Card>
 
       {/* Calendar Progress Tracker */}
-      <Card className="bg-gradient-card shadow-card mt-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="h-5 w-5" />
-            {activeCampaign?.title || 'Campaign'} - {daysCount} Day Tracker
+      <Card className="bg-gradient-card shadow-card">
+        <CardHeader className="pb-2 sm:pb-4">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <CalendarDays className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="truncate">{activeCampaign?.title || 'Campaign'} - {daysCount} Day Tracker</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             {isCampaignLive 
               ? 'Days unlock one by one. Tap an unlocked day to submit.' 
               : activeCampaign 
@@ -318,20 +318,20 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           {!isCampaignLive ? (
-            <div className="text-center py-12 space-y-4">
+            <div className="text-center py-8 sm:py-12 space-y-4">
               <div className="flex justify-center">
-                <div className="rounded-full bg-primary/10 p-6">
-                  <CalendarDays className="h-12 w-12 text-primary" />
+                <div className="rounded-full bg-primary/10 p-4 sm:p-6">
+                  <CalendarDays className="h-8 w-8 sm:h-12 sm:w-12 text-primary" />
                 </div>
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-semibold">
+                <h3 className="text-lg sm:text-xl font-semibold">
                   {activeCampaign?.title || 'Campaign Coming Soon'}
                 </h3>
                 {campaignStartDate && (
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Campaign starts on:</p>
-                    <p className="text-2xl font-bold text-primary">
+                    <p className="text-xs sm:text-sm text-muted-foreground">Campaign starts on:</p>
+                    <p className="text-xl sm:text-2xl font-bold text-primary">
                       {format(campaignStartDate, 'MMMM dd, yyyy')}
                     </p>
                   </div>
@@ -339,7 +339,7 @@ const Dashboard = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4">
+            <div className="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-7 gap-1.5 sm:gap-3">
               {calendarData.map((day) => {
                 const isClickable = day.isUnlocked && !day.hasSubmission && day.isToday;
                 
@@ -352,7 +352,7 @@ const Dashboard = () => {
                       }
                     }}
                     className={`
-                      relative p-2 sm:p-4 rounded-lg border-2 transition-all
+                      relative p-1.5 sm:p-3 rounded-lg border-2 transition-all
                       ${day.hasSubmission 
                         ? 'border-success bg-success/10' 
                         : day.isLocked
@@ -365,22 +365,22 @@ const Dashboard = () => {
                       }
                     `}
                   >
-                    <div className="text-center space-y-1 sm:space-y-2">
-                      <div className="text-sm font-medium">Day {day.day}</div>
+                    <div className="text-center space-y-0.5 sm:space-y-1">
+                      <div className="text-[10px] sm:text-sm font-medium">Day {day.day}</div>
                       <div className="flex justify-center">
                         {day.isLocked ? (
-                          <Lock className="h-5 w-5 text-muted-foreground" />
+                          <Lock className="h-3 w-3 sm:h-5 sm:w-5 text-muted-foreground" />
                         ) : day.hasSubmission ? (
-                          <CheckCircle className="h-5 w-5 text-success" />
+                          <CheckCircle className="h-3 w-3 sm:h-5 sm:w-5 text-success" />
                         ) : day.isToday ? (
-                          <Unlock className="h-5 w-5 text-primary" />
+                          <Unlock className="h-3 w-3 sm:h-5 sm:w-5 text-primary" />
                         ) : day.isPast ? (
-                          <XCircle className="h-5 w-5 text-destructive" />
+                          <XCircle className="h-3 w-3 sm:h-5 sm:w-5 text-destructive" />
                         ) : (
-                          <div className="h-5 w-5 rounded-full border-2 border-muted-foreground" />
+                          <div className="h-3 w-3 sm:h-5 sm:w-5 rounded-full border-2 border-muted-foreground" />
                         )}
                       </div>
-                      <div className="text-xs text-muted-foreground hidden sm:block">
+                      <div className="text-[8px] sm:text-xs text-muted-foreground hidden sm:block">
                         {format(day.dayDate, 'MMM dd')}
                       </div>
                     </div>
@@ -393,25 +393,25 @@ const Dashboard = () => {
       </Card>
 
       {/* Scorecard Section */}
-      <Card className="bg-gradient-card shadow-card mt-8">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-primary" />
+      <Card className="bg-gradient-card shadow-card">
+        <CardHeader className="pb-2 sm:pb-4">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+            <Award className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             Your Scorecard
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm">
             Track your points across consistency, rule compliance, and discipline
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="my-score" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="my-score" className="flex items-center gap-2">
-                <Target className="h-4 w-4" />
+            <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6">
+              <TabsTrigger value="my-score" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Target className="h-3 w-3 sm:h-4 sm:w-4" />
                 My Score
               </TabsTrigger>
-              <TabsTrigger value="leaderboard" className="flex items-center gap-2">
-                <Trophy className="h-4 w-4" />
+              <TabsTrigger value="leaderboard" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
                 Leaderboard
               </TabsTrigger>
             </TabsList>
@@ -435,41 +435,42 @@ const Dashboard = () => {
       </Card>
 
       {/* Submission CTA Card */}
-      <Card className="bg-gradient-card shadow-card mt-8">
-        <CardHeader>
-          <CardTitle>Ready for Today's Submission?</CardTitle>
-          <CardDescription>
+      <Card className="bg-gradient-card shadow-card">
+        <CardHeader className="pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg">Ready for Today's Submission?</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             {canSubmitToday()
               ? "Submit your trade idea for today to maintain your streak."
               : "You've already submitted today. Great job maintaining consistency."}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col sm:flex-row gap-4">
+        <CardContent className="flex flex-col sm:flex-row gap-2 sm:gap-4">
           {canSubmitToday() ? (
             <Button
               onClick={() => navigate('/submit')}
-              className="bg-gradient-primary hover:opacity-90"
+              className="bg-gradient-primary hover:opacity-90 text-sm"
+              size="sm"
             >
               <Plus className="mr-2 h-4 w-4" />
               Submit Today's Trade
             </Button>
           ) : (
-            <Button disabled className="bg-success hover:bg-success">
+            <Button disabled className="bg-success hover:bg-success text-sm" size="sm">
               <CheckCircle className="mr-2 h-4 w-4" />
               Today's Submission Complete
             </Button>
           )}
-          <Button variant="outline" onClick={() => navigate('/leaderboard')}>
+          <Button variant="outline" onClick={() => navigate('/leaderboard')} size="sm" className="text-sm">
             View Leaderboard
           </Button>
         </CardContent>
       </Card>
 
       {/* Social Links Card */}
-      <Card className="bg-gradient-card shadow-card mt-8">
-        <CardHeader>
-          <CardTitle>Stay Connected</CardTitle>
-          <CardDescription>
+      <Card className="bg-gradient-card shadow-card">
+        <CardHeader className="pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg">Stay Connected</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             Follow us for trading tips, updates, and community support
           </CardDescription>
         </CardHeader>
