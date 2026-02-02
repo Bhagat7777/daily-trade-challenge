@@ -318,27 +318,27 @@ const SubmitTrade = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Main Form Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-8">
           {/* Header */}
-          <div className="space-y-2 mb-6">
+          <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
             <div className="flex items-center gap-2 mb-2">
-              <CalendarDays className="h-6 w-6 text-primary" />
-              <span className="text-sm font-medium text-primary">
+              <CalendarDays className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+              <span className="text-xs sm:text-sm font-medium text-primary">
                 {activeCampaign.title}
               </span>
             </div>
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
               Submit Trade - Day {currentDay}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Share your trade idea and analysis for Day {currentDay} of {activeCampaign.days_count}
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Share your trade idea for Day {currentDay} of {activeCampaign.days_count}
             </p>
             <p className="text-xs text-muted-foreground">
-              Campaign: {format(new Date(activeCampaign.start_date), 'MMM dd')} - {format(new Date(activeCampaign.end_date), 'MMM dd, yyyy')}
+              {format(new Date(activeCampaign.start_date), 'MMM dd')} - {format(new Date(activeCampaign.end_date), 'MMM dd, yyyy')}
             </p>
           </div>
 
@@ -422,74 +422,89 @@ const SubmitTrade = () => {
                       Confirm your Twitter post includes these for extra points
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center gap-3">
+                  <CardContent className="space-y-3">
+                    <div className="flex items-start gap-3">
                       <Checkbox
                         id="has-hashtag"
                         checked={formData.hasHashtag}
                         onCheckedChange={(checked) =>
                           setFormData({ ...formData, hasHashtag: !!checked })
                         }
+                        className="mt-0.5"
                       />
-                      <label htmlFor="has-hashtag" className="flex items-center gap-2 text-sm cursor-pointer">
-                        <Hash className="h-4 w-4 text-primary" />
-                        I used the correct hashtag (#7DaysTradingChallenge)
+                      <label htmlFor="has-hashtag" className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm cursor-pointer">
+                        <span className="flex items-center gap-1.5">
+                          <Hash className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-xs sm:text-sm">Correct hashtag</span>
+                        </span>
                         <span className="text-xs text-success font-medium">+2 pts</span>
                       </label>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-start gap-3">
                       <Checkbox
                         id="has-tagged"
                         checked={formData.hasTaggedAccount}
                         onCheckedChange={(checked) =>
                           setFormData({ ...formData, hasTaggedAccount: !!checked })
                         }
+                        className="mt-0.5"
                       />
-                      <label htmlFor="has-tagged" className="flex items-center gap-2 text-sm cursor-pointer">
-                        <AtSign className="h-4 w-4 text-primary" />
-                        I tagged @propfirm_forex
+                      <label htmlFor="has-tagged" className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm cursor-pointer">
+                        <span className="flex items-center gap-1.5">
+                          <AtSign className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-xs sm:text-sm">Tagged @propfirm_forex</span>
+                        </span>
                         <span className="text-xs text-success font-medium">+1 pt</span>
                       </label>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-start gap-3">
                       <Checkbox
                         id="has-trade-idea"
                         checked={formData.hasTradeIdea}
                         onCheckedChange={(checked) =>
                           setFormData({ ...formData, hasTradeIdea: !!checked })
                         }
+                        className="mt-0.5"
                       />
-                      <label htmlFor="has-trade-idea" className="flex items-center gap-2 text-sm cursor-pointer">
-                        <TrendingUp className="h-4 w-4 text-primary" />
-                        I included a trade idea/setup
+                      <label htmlFor="has-trade-idea" className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm cursor-pointer">
+                        <span className="flex items-center gap-1.5">
+                          <TrendingUp className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-xs sm:text-sm">Trade idea/setup</span>
+                        </span>
                         <span className="text-xs text-success font-medium">+1 pt</span>
                       </label>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-start gap-3">
                       <Checkbox
                         id="has-chart"
                         checked={formData.hasChart}
                         onCheckedChange={(checked) =>
                           setFormData({ ...formData, hasChart: !!checked })
                         }
+                        className="mt-0.5"
                       />
-                      <label htmlFor="has-chart" className="flex items-center gap-2 text-sm cursor-pointer">
-                        <FileImage className="h-4 w-4 text-primary" />
-                        I included a chart image
+                      <label htmlFor="has-chart" className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm cursor-pointer">
+                        <span className="flex items-center gap-1.5">
+                          <FileImage className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-xs sm:text-sm">Chart image</span>
+                        </span>
                         <span className="text-xs text-success font-medium">+1 pt</span>
                       </label>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-start gap-3">
                       <Checkbox
                         id="has-analysis"
                         checked={formData.hasAnalysis}
                         onCheckedChange={(checked) =>
                           setFormData({ ...formData, hasAnalysis: !!checked })
                         }
+                        className="mt-0.5"
                       />
-                      <label htmlFor="has-analysis" className="flex items-center gap-2 text-sm cursor-pointer">
-                        <Info className="h-4 w-4 text-primary" />
-                        I included trade analysis
+                      <label htmlFor="has-analysis" className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-sm cursor-pointer">
+                        <span className="flex items-center gap-1.5">
+                          <Info className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-xs sm:text-sm">Trade analysis</span>
+                        </span>
                         <span className="text-xs text-success font-medium">+1 pt</span>
                       </label>
                     </div>

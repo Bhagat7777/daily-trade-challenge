@@ -149,7 +149,7 @@ const ScorecardDisplay: React.FC<ScorecardDisplayProps> = ({
               <div 
                 key={day.day}
                 className={`
-                  flex items-center justify-between p-3 rounded-lg border
+                  flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 rounded-lg border
                   ${day.submitted 
                     ? 'bg-success/10 border-success/30' 
                     : 'bg-muted/30 border-muted'
@@ -158,7 +158,7 @@ const ScorecardDisplay: React.FC<ScorecardDisplayProps> = ({
               >
                 <div className="flex items-center gap-3">
                   <div className={`
-                    w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
+                    w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0
                     ${day.submitted ? 'bg-success text-success-foreground' : 'bg-muted text-muted-foreground'}
                   `}>
                     {day.day}
@@ -169,42 +169,42 @@ const ScorecardDisplay: React.FC<ScorecardDisplayProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 flex-wrap sm:justify-end">
                   {day.submitted ? (
                     <>
                       <Badge 
                         variant={day.has_hashtag ? "default" : "secondary"}
-                        className="text-xs"
+                        className="text-xs px-1.5 py-0.5"
                       >
-                        {day.has_hashtag ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
+                        {day.has_hashtag ? <CheckCircle className="h-3 w-3 mr-0.5" /> : <XCircle className="h-3 w-3 mr-0.5" />}
                         #
                       </Badge>
                       <Badge 
                         variant={day.has_tagged_account ? "default" : "secondary"}
-                        className="text-xs"
+                        className="text-xs px-1.5 py-0.5"
                       >
-                        {day.has_tagged_account ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
+                        {day.has_tagged_account ? <CheckCircle className="h-3 w-3 mr-0.5" /> : <XCircle className="h-3 w-3 mr-0.5" />}
                         @
                       </Badge>
                       <Badge 
                         variant={day.has_chart ? "default" : "secondary"}
-                        className="text-xs"
+                        className="text-xs px-1.5 py-0.5"
                       >
-                        {day.has_chart ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
+                        {day.has_chart ? <CheckCircle className="h-3 w-3 mr-0.5" /> : <XCircle className="h-3 w-3 mr-0.5" />}
                         📊
                       </Badge>
                       <Badge 
                         variant={day.has_analysis ? "default" : "secondary"}
-                        className="text-xs"
+                        className="text-xs px-1.5 py-0.5"
                       >
-                        {day.has_analysis ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
+                        {day.has_analysis ? <CheckCircle className="h-3 w-3 mr-0.5" /> : <XCircle className="h-3 w-3 mr-0.5" />}
                         📝
                       </Badge>
                       <Badge 
                         variant={day.has_trade_idea ? "default" : "secondary"}
-                        className="text-xs"
+                        className="text-xs px-1.5 py-0.5"
                       >
-                        {day.has_trade_idea ? <CheckCircle className="h-3 w-3 mr-1" /> : <XCircle className="h-3 w-3 mr-1" />}
+                        {day.has_trade_idea ? <CheckCircle className="h-3 w-3 mr-0.5" /> : <XCircle className="h-3 w-3 mr-0.5" />}
                         💡
                       </Badge>
                     </>
