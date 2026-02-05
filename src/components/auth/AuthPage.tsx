@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { TrendingUp, BarChart3, Eye, EyeOff } from 'lucide-react';
+import { TrendingUp, BarChart3, Eye, EyeOff, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
@@ -15,6 +15,8 @@ const AuthPage = () => {
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showVerificationScreen, setShowVerificationScreen] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
 
   const [signInData, setSignInData] = useState({
     email: '',
@@ -104,14 +106,92 @@ const AuthPage = () => {
         variant: "destructive",
       });
     } else {
-      toast({
-        title: "Success!",
-        description: "Please check your email to confirm your account.",
-      });
+      // Show verification screen
+      setVerificationEmail(signUpData.email);
+      setShowVerificationScreen(true);
     }
 
     setLoading(false);
   };
+
+  const handleBackToSignup = () => {
+    setShowVerificationScreen(false);
+    setVerificationEmail('');
+    setSignUpData({
+      email: '',
+      password: '',
+      username: '',
+      confirmPassword: '',
+    });
+  };
+
+  // Show email verification screen
+  if (showVerificationScreen) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-md space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-2">
+              <div className="p-2 bg-gradient-primary rounded-lg">
+                <TrendingUp className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            </div>
+          </div>
+
+          <Card className="bg-gradient-card shadow-card">
+            <CardHeader className="text-center space-y-4">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                <Mail className="h-8 w-8 text-primary" />
+              </div>
+              <CardTitle className="text-xl sm:text-2xl">Check Your Email</CardTitle>
+              <CardDescription className="text-base">
+                We've sent a verification link to
+              </CardDescription>
+              <p className="font-medium text-foreground break-all">{verificationEmail}</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">
+                    Click the link in your email to verify your account
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">
+                    After verification, you can sign in with your credentials
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">
+                    Check your spam folder if you don't see the email
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleBackToSignup}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Sign Up
+                </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  Didn't receive the email? Check your spam folder or try signing up again.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
