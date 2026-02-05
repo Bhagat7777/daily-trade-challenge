@@ -62,18 +62,45 @@ const AuthPage = () => {
       return;
     }
 
+    if (signUpData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!signUpData.username.trim()) {
+      toast({
+        title: "Error",
+        description: "Username is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await signUp(
       signUpData.email,
       signUpData.password,
-      signUpData.username
+      signUpData.username.trim()
     );
 
     if (error) {
+      let errorMessage = error.message;
+      
+      // Handle specific error messages
+      if (error.message?.includes('duplicate key') || error.message?.includes('already registered')) {
+        errorMessage = "An account with this email already exists. Please sign in instead.";
+      } else if (error.message?.includes('Database error')) {
+        errorMessage = "Unable to create account. Please try a different username or email.";
+      }
+      
       toast({
         title: "Error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } else {
