@@ -5,14 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Shield, User, CheckCircle, XCircle } from 'lucide-react';
-import { ensureAdminUser } from '@/utils/adminSetup';
-import { useToast } from '@/hooks/use-toast';
 
 const AdminDebug = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -30,30 +26,7 @@ const AdminDebug = () => {
       .single();
     
     setProfile(data);
-    console.log('Profile data:', data);
-    console.log('Profile error:', error);
-  };
-
-  const setupAdmin = async () => {
-    setLoading(true);
-    const result = await ensureAdminUser();
-    
-    if (result.success) {
-      toast({
-        title: "Success!",
-        description: "Admin user created/updated successfully",
-      });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } else {
-      toast({
-        title: "Error",
-        description: result.error?.message || "Failed to setup admin",
-        variant: "destructive",
-      });
-    }
-    setLoading(false);
+    if (error) console.error('Profile fetch error:', error.message);
   };
 
   const navigateToAdmin = () => {
@@ -65,7 +38,7 @@ const AdminDebug = () => {
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-2">Admin Debug Panel</h1>
-          <p className="text-muted-foreground">Debug admin authentication and setup</p>
+          <p className="text-muted-foreground">View admin authentication status</p>
         </div>
 
         <Card>
@@ -163,10 +136,6 @@ const AdminDebug = () => {
         </Card>
 
         <div className="flex gap-4">
-          <Button onClick={setupAdmin} disabled={loading} className="flex-1">
-            {loading ? 'Setting up...' : 'Setup Admin User'}
-          </Button>
-          
           <Button onClick={checkProfile} variant="outline">
             Refresh Profile
           </Button>
@@ -181,15 +150,15 @@ const AdminDebug = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>Admin Setup</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              If you're having issues with admin access:
+              To set up an admin user, use the Supabase Dashboard directly:
             </p>
             <ol className="text-sm space-y-1 list-decimal list-inside text-muted-foreground">
-              <li>Click "Setup Admin User" button</li>
-              <li>Wait for success message</li>
+              <li>Go to Supabase Dashboard → SQL Editor</li>
+              <li>Update the user's profile role to 'admin'</li>
               <li>Click "Refresh Profile" to verify admin role</li>
               <li>Use "Go to Admin Dashboard" if admin role is confirmed</li>
             </ol>
