@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { TrendingUp, BarChart3, Eye, EyeOff, Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { TrendingUp, BarChart3, Eye, EyeOff } from 'lucide-react';
 
 const AuthPage = () => {
   const { signIn, signUp } = useAuth();
