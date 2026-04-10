@@ -383,6 +383,7 @@ export const useTradingJournal = () => {
         },
         () => {
           fetchUserSubmissions();
+          fetchLeaderboard();
         }
       )
       .subscribe();
@@ -403,9 +404,27 @@ export const useTradingJournal = () => {
       )
       .subscribe();
 
+    const campaignsChannel = supabase
+      .channel('campaigns-changes-journal')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'campaigns',
+        },
+        () => {
+          fetchUserSubmissions();
+          fetchUserStats();
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
+
     return () => {
       supabase.removeChannel(submissionsChannel);
       supabase.removeChannel(participantsChannel);
+      supabase.removeChannel(campaignsChannel);
     };
   }, [user]);
 
