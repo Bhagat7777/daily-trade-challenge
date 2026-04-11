@@ -314,7 +314,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="scorecard">
-            <AdminScorecardLeaderboard campaignId={activeCampaign?.id} />
+            <AdminScorecardLeaderboard campaignId={selectedCampaignId || undefined} />
           </TabsContent>
 
           <TabsContent value="leaderboard">
