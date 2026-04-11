@@ -36,30 +36,47 @@ export const useAdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [submissionsLoading, setSubmissionsLoading] = useState(false);
   const [activeCampaign, setActiveCampaign] = useState<any>(null);
+  const [allCampaigns, setAllCampaigns] = useState<any[]>([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Fetch active campaign
-  const fetchActiveCampaign = useCallback(async () => {
+  // Fetch all campaigns
+  const fetchAllCampaigns = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('campaigns')
         .select('*')
-        .eq('is_active', true)
-        .eq('status', 'live')
-        .order('start_date', { ascending: false })
-        .limit(1)
-        .single();
+        .order('start_date', { ascending: false });
 
-      if (error && error.code !== 'PGRST116') throw error;
-      setActiveCampaign(data);
-      return data;
+      if (error) throw error;
+      setAllCampaigns(data || []);
+
+      // Auto-select: prefer live campaign, fallback to most recent
+      if (!selectedCampaignId && data && data.length > 0) {
+        const liveCampaign = data.find(c => c.status === 'live' && c.is_active);
+        const defaultCampaign = liveCampaign || data[0];
+        setSelectedCampaignId(defaultCampaign.id);
+        setActiveCampaign(defaultCampaign);
+        return defaultCampaign;
+      }
+
+      // If selectedCampaignId is set, find it
+      if (selectedCampaignId && data) {
+        const found = data.find(c => c.id === selectedCampaignId);
+        if (found) {
+          setActiveCampaign(found);
+          return found;
+        }
+      }
+
+      return null;
     } catch (error) {
-      console.error('Error fetching active campaign:', error);
+      console.error('Error fetching campaigns:', error);
       return null;
     }
-  }, []);
+  }, [selectedCampaignId]);
 
   // Check if user is admin
   const checkAdminStatus = async () => {
@@ -78,7 +95,7 @@ export const useAdminDashboard = () => {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const campaign = await fetchActiveCampaign();
+      const campaign = await fetchAllCampaigns();
       if (!campaign) {
         setUsers([]);
         return;
@@ -154,14 +171,14 @@ export const useAdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [fetchActiveCampaign, toast]);
+  }, [fetchAllCampaigns, toast]);
 
   // Fetch submissions for a specific user
   const fetchUserSubmissions = async (userId: string) => {
     try {
       setSubmissionsLoading(true);
       
-      const campaign = activeCampaign || await fetchActiveCampaign();
+      const campaign = activeCampaign || await fetchAllCampaigns();
       
       if (!campaign) {
         setSubmissions([]);
@@ -283,7 +300,6 @@ export const useAdminDashboard = () => {
 
     checkAdminStatus().then(isAdmin => {
       if (isAdmin) {
-        fetchActiveCampaign();
         fetchUsers();
       }
     });
@@ -333,7 +349,6 @@ export const useAdminDashboard = () => {
           table: 'campaigns'
         },
         () => {
-          fetchActiveCampaign();
           debouncedFetchUsers();
         }
       )
@@ -343,7 +358,14 @@ export const useAdminDashboard = () => {
       clearTimeout(updateTimeout);
       supabase.removeChannel(channel);
     };
-  }, [user, fetchUsers, fetchActiveCampaign]);
+  }, [user, fetchUsers]);
+
+  // When selectedCampaignId changes, refetch
+  useEffect(() => {
+    if (selectedCampaignId) {
+      fetchUsers();
+    }
+  }, [selectedCampaignId]);
 
   return {
     users,
@@ -351,6 +373,9 @@ export const useAdminDashboard = () => {
     loading,
     submissionsLoading,
     activeCampaign,
+    allCampaigns,
+    selectedCampaignId,
+    setSelectedCampaignId,
     lastUpdate,
     fetchUserSubmissions,
     updateUserStatus,
