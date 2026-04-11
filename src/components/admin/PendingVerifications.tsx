@@ -6,7 +6,7 @@ import { ProofVerification } from './ProofVerification';
 import { Clock, CheckCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export const PendingVerifications = () => {
+export const PendingVerifications = ({ campaignId }: { campaignId?: string }) => {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,11 +14,16 @@ export const PendingVerifications = () => {
     setLoading(true);
     
     try {
-      // First get submissions
-      const { data: submissionsData, error: submissionsError } = await supabase
+      let query = supabase
         .from('trade_submissions')
         .select('*')
         .order('created_at', { ascending: false });
+
+      if (campaignId) {
+        query = query.eq('campaign_id', campaignId);
+      }
+
+      const { data: submissionsData, error: submissionsError } = await query;
 
       if (submissionsError) throw submissionsError;
 

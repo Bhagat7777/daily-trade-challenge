@@ -80,8 +80,8 @@ const TraderSubmissionCard = ({ traderData, campaignDays, index }: { traderData:
   );
 };
 
-export const CampaignSubmissions = () => {
-  const { activeCampaign, traders, loading } = useCampaignSubmissions();
+export const CampaignSubmissions = ({ campaignId }: { campaignId?: string }) => {
+  const { activeCampaign, traders, loading } = useCampaignSubmissions(campaignId);
   const [searchTerm, setSearchTerm] = useState('');
 
   const activeDays = useMemo(() => {
