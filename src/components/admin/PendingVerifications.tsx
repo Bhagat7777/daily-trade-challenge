@@ -59,7 +59,6 @@ export const PendingVerifications = ({ campaignId }: { campaignId?: string }) =>
   useEffect(() => {
     fetchSubmissions();
 
-    // Subscribe to changes
     const channel = supabase
       .channel('verification-changes')
       .on(
@@ -78,7 +77,7 @@ export const PendingVerifications = ({ campaignId }: { campaignId?: string }) =>
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [campaignId]);
 
   const pendingSubmissions = submissions.filter(s => s.verification_status === 'pending');
   const verifiedSubmissions = submissions.filter(s => s.verification_status === 'verified');
