@@ -306,11 +306,11 @@ const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="verifications">
-            <PendingVerifications />
+            <PendingVerifications campaignId={selectedCampaignId || undefined} />
           </TabsContent>
 
           <TabsContent value="submissions">
-            <CampaignSubmissions />
+            <CampaignSubmissions campaignId={selectedCampaignId || undefined} />
           </TabsContent>
 
           <TabsContent value="scorecard">
