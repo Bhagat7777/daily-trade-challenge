@@ -30,7 +30,7 @@ export interface TraderData {
   totalSubmissions: number;
 }
 
-export const useCampaignSubmissions = () => {
+export const useCampaignSubmissions = (campaignId?: string) => {
   const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
   const [traders, setTraders] = useState<Map<string, TraderData>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,6 @@ export const useCampaignSubmissions = () => {
   const processSubmissions = (profiles: Profile[], submissions: Submission[]): Map<string, TraderData> => {
     const tradersMap = new Map<string, TraderData>();
 
-    // Initialize map with all profiles that have submissions
     profiles.forEach(profile => {
       tradersMap.set(profile.id, {
         profile,
@@ -48,7 +47,6 @@ export const useCampaignSubmissions = () => {
       });
     });
 
-    // Populate submissions
     submissions.forEach(submission => {
       const trader = tradersMap.get(submission.user_id);
       if (trader && submission.day_number) {
@@ -56,7 +54,6 @@ export const useCampaignSubmissions = () => {
       }
     });
     
-    // Calculate total submissions
     tradersMap.forEach(trader => {
       trader.totalSubmissions = trader.submissions.size;
     });
@@ -67,20 +64,36 @@ export const useCampaignSubmissions = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Fetch active campaign (more robust query)
-      const { data: campaignData, error: campaignError } = await supabase
-        .from('campaigns')
-        .select('id, title, days_count, start_date')
-        .eq('status', 'live')
-        .eq('is_active', true)
-        .order('start_date', { ascending: false })
-        .limit(1)
-        .single();
+      let campaignData: Campaign | null = null;
 
-      if (campaignError || !campaignData) {
+      if (campaignId) {
+        // Fetch specific campaign by ID (regardless of status)
+        const { data, error } = await supabase
+          .from('campaigns')
+          .select('id, title, days_count, start_date')
+          .eq('id', campaignId)
+          .single();
+
+        if (error) throw error;
+        campaignData = data;
+      } else {
+        // Fallback: fetch active live campaign
+        const { data, error } = await supabase
+          .from('campaigns')
+          .select('id, title, days_count, start_date')
+          .eq('status', 'live')
+          .eq('is_active', true)
+          .order('start_date', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (error && error.code !== 'PGRST116') throw error;
+        campaignData = data;
+      }
+
+      if (!campaignData) {
         setActiveCampaign(null);
         setTraders(new Map());
-        if (campaignError && campaignError.code !== 'PGRST116') throw campaignError; // Ignore "no rows found"
         return;
       }
       setActiveCampaign(campaignData);
@@ -121,7 +134,7 @@ export const useCampaignSubmissions = () => {
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, [toast, campaignId]);
 
   useEffect(() => {
     fetchData();

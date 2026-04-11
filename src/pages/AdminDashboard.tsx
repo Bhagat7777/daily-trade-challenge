@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -55,6 +56,9 @@ const AdminDashboard = () => {
     loading,
     submissionsLoading,
     activeCampaign,
+    allCampaigns,
+    selectedCampaignId,
+    setSelectedCampaignId,
     lastUpdate,
     fetchUserSubmissions,
     updateUserStatus,
@@ -191,6 +195,27 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* Campaign Selector */}
+        {allCampaigns.length > 0 && (
+          <div className="mb-6">
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Campaign:</label>
+              <Select value={selectedCampaignId || ''} onValueChange={setSelectedCampaignId}>
+                <SelectTrigger className="max-w-md">
+                  <SelectValue placeholder="Select a campaign" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allCampaigns.map(c => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.title} — {c.status === 'live' ? '🟢 Live' : c.status === 'ended' ? '🔴 Ended' : '🟡 Upcoming'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
@@ -281,15 +306,15 @@ const AdminDashboard = () => {
           </TabsList>
 
           <TabsContent value="verifications">
-            <PendingVerifications />
+            <PendingVerifications campaignId={selectedCampaignId || undefined} />
           </TabsContent>
 
           <TabsContent value="submissions">
-            <CampaignSubmissions />
+            <CampaignSubmissions campaignId={selectedCampaignId || undefined} />
           </TabsContent>
 
           <TabsContent value="scorecard">
-            <AdminScorecardLeaderboard campaignId={activeCampaign?.id} />
+            <AdminScorecardLeaderboard campaignId={selectedCampaignId || undefined} />
           </TabsContent>
 
           <TabsContent value="leaderboard">
